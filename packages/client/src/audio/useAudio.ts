@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { audioManager } from './audio-manager';
 
 export function useAudio() {
@@ -25,13 +25,6 @@ export function useAudio() {
 
   const stopBgm = useCallback(() => {
     audioManager.stopBgm();
-  }, []);
-
-  // コンポーネントアンマウント時にBGM停止
-  useEffect(() => {
-    return () => {
-      audioManager.stopBgm();
-    };
   }, []);
 
   return { muted, init, toggleMute, play, startBgm, stopBgm };

@@ -8,6 +8,18 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: var(--space-lg);
+  animation: pageEnter 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card {
@@ -18,6 +30,18 @@
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 400px;
+  animation: cardEnter 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms both;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .welcome {
@@ -46,22 +70,46 @@
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #fff;
-  background: var(--btn-primary);
-  border: none;
+  color: var(--btn-primary-text);
+  background: linear-gradient(135deg, #c5a44e, #dbc06a);
+  border: 1px solid rgba(255, 215, 0, 0.3);
   box-shadow: var(--shadow-md);
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
     background var(--transition-fast);
-  min-height: 56px;
+  min-height: 52px;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.createBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  transition: background-position 600ms ease;
+  pointer-events: none;
+}
+
+.createBtn:hover::after {
+  background-position: -50% 0;
 }
 
 .createBtn:hover {
-  background: var(--btn-primary-hover);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #d4b35d, #e8cf7a);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
 }
 
 .createBtn:active {
@@ -88,6 +136,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  margin-bottom: 0;
 }
 
 .joinTitle {
@@ -99,10 +148,12 @@
 .joinForm {
   display: flex;
   gap: var(--space-sm);
+  width: 100%;
 }
 
 .roomIdInput {
   flex: 1;
+  min-width: 0;
   padding: 12px 16px;
   font-size: 1.25rem;
   font-family: 'Courier New', Courier, monospace;
@@ -139,23 +190,23 @@
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
-  background: var(--btn-secondary);
-  border: none;
-  box-shadow: var(--shadow-sm);
+  color: var(--accent);
+  background: transparent;
+  border: 2px solid var(--accent);
+  box-shadow: none;
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
     background var(--transition-fast);
   min-height: 48px;
-  min-width: 72px;
+  flex-shrink: 0;
   cursor: pointer;
   user-select: none;
 }
 
 .joinBtn:hover:not(:disabled) {
-  background: var(--btn-secondary-hover);
-  box-shadow: var(--shadow-md);
+  background: rgba(197, 164, 78, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .joinBtn:active:not(:disabled) {
@@ -168,6 +219,7 @@
 }
 
 .npcSection {
+  margin-top: var(--space-lg);
   margin-bottom: var(--space-xl);
 }
 
@@ -176,32 +228,34 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 16px 24px;
+  padding: 14px 24px;
   border-radius: var(--radius-md);
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #fff;
-  background: #5cb85c;
-  border: none;
-  box-shadow: var(--shadow-md);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
-    background var(--transition-fast);
-  min-height: 56px;
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+  min-height: 48px;
   cursor: pointer;
   user-select: none;
 }
 
 .npcBtn:hover {
-  background: #4cae4c;
-  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(197, 164, 78, 0.05);
 }
 
 .npcBtn:active {
   transform: translateY(1px);
-  box-shadow: var(--shadow-sm);
 }
 
 .error {

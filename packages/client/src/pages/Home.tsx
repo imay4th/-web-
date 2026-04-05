@@ -40,6 +40,7 @@ export function Home({ onSetNickname }: HomeProps) {
         </div>
         <h1 className={styles.title}>ヨット</h1>
         <p className={styles.subtitle}>オンラインダイスゲーム</p>
+        <div className={styles.ornament} />
         <form className={styles.form} onSubmit={handleSubmit}>
           <label className={styles.label} htmlFor="nickname">
             ニックネーム

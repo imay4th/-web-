@@ -35,7 +35,10 @@ export function DiceArea({
   scoreCard,
 }: DiceAreaProps) {
   const audio = useAudio();
+  const audioRef = useRef(audio);
+  audioRef.current = audio;
   const [rolling, setRolling] = useState(false);
+  const [rollAnimKey, setRollAnimKey] = useState(0);
   const [justRolled, setJustRolled] = useState(false);
   const prevRollCountRef = useRef(rollCount);
   const latestDiceRef = useRef(dice);
@@ -57,8 +60,9 @@ export function DiceArea({
   useEffect(() => {
     if (rollCount > 0 && rollCount !== prevRollCountRef.current) {
       setRolling(true);
+      setRollAnimKey(k => k + 1);
       setJustRolled(false);
-      audio.play('diceRoll');
+      audioRef.current.play('diceRoll');
       const timer = setTimeout(() => {
         setRolling(false);
         setJustRolled(true);
@@ -83,7 +87,7 @@ export function DiceArea({
     }
     prevRollCountRef.current = rollCount;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rollCount, audio]);
+  }, [rollCount]);
 
   // タイマーのクリーンアップ
   useEffect(() => {
@@ -149,7 +153,7 @@ export function DiceArea({
         handAnnounceTimerRef.current = null;
       }, 2800);
     }
-  }, [detectedHand]);
+  }, [detectedHand, rollCount]);
 
   // スコア選択促し表示条件
   const showScoringPrompt =
@@ -170,9 +174,9 @@ export function DiceArea({
 
   const handleToggleKeep = useCallback((dieIndex: number) => {
     setJustRolled(false);
-    audio.play('diceKeep');
+    audioRef.current.play('diceKeep');
     onToggleKeep(dieIndex);
-  }, [onToggleKeep, audio]);
+  }, [onToggleKeep]);
 
   const containerClass = `${styles.container}${!isMyTurn ? ` ${styles.notMyTurn}` : ''}`;
 
@@ -192,7 +196,7 @@ export function DiceArea({
             if (entry) {
               return (
                 <Die
-                  key={`kept-${entry.originalIndex}`}
+                  key={`kept-${entry.originalIndex}-${rollAnimKey}`}
                   index={entry.originalIndex}
                   value={entry.die.value}
                   kept={true}
@@ -233,7 +237,7 @@ export function DiceArea({
               .filter(({ die }) => !die.kept)
               .map(({ die, originalIndex }) => (
                 <Die
-                  key={originalIndex}
+                  key={`${originalIndex}-${rollAnimKey}`}
                   index={originalIndex}
                   value={die.value}
                   kept={false}
@@ -247,7 +251,7 @@ export function DiceArea({
             return (
               <>
                 <div className={styles.diceRow}>{rollDice.slice(0, 3)}</div>
-                {rollDice.length > 3 && <div className={styles.diceRow}>{rollDice.slice(3)}</div>}
+                <div className={styles.diceRow}>{rollDice.slice(3)}</div>
               </>
             );
           })()

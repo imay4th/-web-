@@ -17,12 +17,13 @@
 }
 
 .handText {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 800;
-  color: #d4a017;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(212, 160, 23, 0.3);
+  background: linear-gradient(135deg, #c5a44e, #f0d878);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(197, 164, 78, 0.5));
   animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 

@@ -10,23 +10,12 @@ const DIFFICULTIES: {
   key: NpcDifficulty;
   label: string;
   description: string;
+  icon: string;
 }[] = [
-  { key: 'easy', label: 'よわい', description: 'ランダムな判断をする初心者NPC' },
-  {
-    key: 'normal',
-    label: 'ふつう',
-    description: '基本的な戦略を使うNPC',
-  },
-  {
-    key: 'hard',
-    label: 'つよい',
-    description: '期待値を計算する上級NPC',
-  },
-  {
-    key: 'expert',
-    label: 'さいきょう',
-    description: '最善手を追求する最強NPC',
-  },
+  { key: 'easy', label: 'よわい', description: 'ランダムな判断をする初心者NPC', icon: '🌱' },
+  { key: 'normal', label: 'ふつう', description: '基本的な戦略を使うNPC', icon: '⚡' },
+  { key: 'hard', label: 'つよい', description: '期待値を計算する上級NPC', icon: '🔥' },
+  { key: 'expert', label: 'さいきょう', description: '最善手を追求する最強NPC', icon: '💎' },
 ];
 
 export function NpcSelect({ onSelect, onBack }: NpcSelectProps) {
@@ -44,7 +33,10 @@ export function NpcSelect({ onSelect, onBack }: NpcSelectProps) {
               className={styles.difficultyCard}
               onClick={() => onSelect(d.key)}
             >
-              <span className={styles.difficultyLabel}>{d.label}</span>
+              <div className={styles.difficultyHeader}>
+                <span className={styles.difficultyIcon}>{d.icon}</span>
+                <span className={styles.difficultyLabel}>{d.label}</span>
+              </div>
               <span className={styles.difficultyDesc}>{d.description}</span>
             </button>
           ))}

@@ -9,7 +9,7 @@ interface YachtCelebrationProps {
 const CONFETTI_COUNT = 50;
 const DURATION = 4000;
 
-const CONFETTI_COLORS = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F', '#BB8FCE', '#FF4500', '#00FF7F'];
+const CONFETTI_COLORS = ['#FFD700', '#c5a44e', '#FF6B6B', '#4ECDC4', '#f0d878', '#dbc06a', '#FF4500', '#00FF7F'];
 
 export function YachtCelebration({ dieValue }: YachtCelebrationProps) {
   const audio = useAudio();

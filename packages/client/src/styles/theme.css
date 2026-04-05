@@ -1,50 +1,61 @@
-/* 世界のアソビ大全51 ヨット風テーマ */
+/* Royal Table テーマ - プレミアムテーブルゲーム */
 
 :root {
-  /* 背景 - 温かみのあるウッドテーブル */
-  --bg-table: #6b5344;
-  --bg-table-dark: #4a3728;
+  /* 背景 - ダークマホガニー */
+  --bg-table: #3d2b1f;
+  --bg-table-dark: #2a1a10;
+  --bg-table-light: #5a3e2e;
 
-  /* カード・コンテナ背景 */
-  --card-bg: #faf6f0;
-  --card-bg-hover: #f0ebe3;
-  --modal-bg: rgba(0, 0, 0, 0.5);
+  /* カード・コンテナ背景 - グラスモーフィズム */
+  --card-bg: rgba(255, 252, 245, 0.92);
+  --card-bg-hover: rgba(245, 240, 230, 0.95);
+  --card-bg-solid: #fffcf5;
+  --card-border: rgba(212, 160, 23, 0.15);
+  --modal-bg: rgba(0, 0, 0, 0.65);
 
   /* テキストカラー */
-  --text-primary: #2c2c2c;
-  --text-secondary: #666666;
-  --text-muted: #999999;
+  --text-primary: #1a1410;
+  --text-secondary: #5a5044;
+  --text-muted: #8a7e72;
+  --text-on-dark: #f0e8d8;
 
-  /* アクセントカラー - ブルー */
-  --accent: #4A90D9;
-  --accent-dark: #3a7bc8;
-  --accent-light: #6ba3e0;
+  /* ゴールドアクセント */
+  --accent: #c5a44e;
+  --accent-dark: #a8892e;
+  --accent-light: #dbc06a;
+  --accent-glow: rgba(197, 164, 78, 0.3);
 
-  /* セカンダリアクセント */
-  --accent-red: #d9534f;
-  --accent-red-hover: #c9302c;
+  /* 情報用ブルー (旧アクセント) */
+  --accent-blue: #4A90D9;
+
+  /* レッド */
+  --accent-red: #b44040;
+  --accent-red-hover: #9a3030;
 
   /* ボタン */
-  --btn-primary: #4A90D9;
-  --btn-primary-hover: #3a7bc8;
-  --btn-danger: #d9534f;
-  --btn-danger-hover: #c9302c;
-  --btn-secondary: #8c8c8c;
-  --btn-secondary-hover: #737373;
+  --btn-primary: #c5a44e;
+  --btn-primary-hover: #d4b35d;
+  --btn-primary-text: #1a1410;
+  --btn-danger: #b44040;
+  --btn-danger-hover: #9a3030;
+  --btn-secondary: #8a7e72;
+  --btn-secondary-hover: #6e6358;
 
   /* シャドウ */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-gold: 0 0 20px rgba(197, 164, 78, 0.2);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 
   /* ボーダー */
-  --border-color: #e0d8d0;
-  --border-light: #ece7e0;
+  --border-color: rgba(212, 160, 23, 0.2);
+  --border-light: rgba(212, 160, 23, 0.1);
 
   /* 角丸 */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
 
   /* スペーシング */
   --space-xs: 4px;
@@ -56,29 +67,54 @@
 
   /* トランジション */
   --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* グラスモーフィズム */
+  --backdrop-blur: blur(12px);
 }
 
-/* ウッドテーブル背景 */
+/* ダークマホガニー背景 + CSS木目テクスチャ */
 body {
-  background: radial-gradient(
-    ellipse at 50% 30%,
-    var(--bg-table) 0%,
-    var(--bg-table-dark) 100%
-  );
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 50px,
+      rgba(0, 0, 0, 0.03) 50px,
+      rgba(0, 0, 0, 0.03) 51px
+    ),
+    repeating-linear-gradient(
+      95deg,
+      transparent,
+      transparent 80px,
+      rgba(0, 0, 0, 0.02) 80px,
+      rgba(0, 0, 0, 0.02) 81px
+    ),
+    radial-gradient(
+      ellipse at 50% 30%,
+      var(--bg-table-light) 0%,
+      var(--bg-table) 40%,
+      var(--bg-table-dark) 100%
+    );
   background-attachment: fixed;
 }
 
-/* クリーンなカードスタイル */
+/* グラスモーフィズム カードスタイル */
 .card {
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--card-border);
+  border-top: 2px solid rgba(255, 215, 0, 0.25);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* フラットボタン */
+/* ゴールドグラデーション プライマリボタン */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -112,12 +148,15 @@ body {
 }
 
 .btn-primary {
-  background: var(--btn-primary);
+  background: linear-gradient(135deg, #c5a44e, #dbc06a);
+  color: var(--btn-primary-text);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--btn-primary-hover);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #d4b35d, #e8cf7a);
+  box-shadow: var(--shadow-md), var(--shadow-gold);
 }
 
 .btn-danger {
@@ -136,16 +175,16 @@ body {
   background: var(--btn-secondary-hover);
 }
 
-/* クリーンな入力フィールド */
+/* 入力フィールド */
 .input {
   width: 100%;
   padding: 12px 16px;
   font-size: 1rem;
   color: var(--text-primary);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-inset);
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -155,8 +194,8 @@ body {
 .input:focus {
   border-color: var(--accent);
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.06),
-    0 0 0 3px rgba(74, 144, 217, 0.15);
+    var(--shadow-inset),
+    0 0 0 3px var(--accent-glow);
   outline: none;
 }
 

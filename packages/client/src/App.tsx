@@ -1,4 +1,6 @@
+import { useRef, useEffect } from 'react';
 import { useGame } from './hooks/useGame';
+import { useAudio } from './audio/useAudio';
 import { Home } from './pages/Home';
 import { Lobby } from './pages/Lobby';
 import { WaitingRoom } from './pages/WaitingRoom';
@@ -8,6 +10,27 @@ import './styles/theme.css';
 
 export function App() {
   const game = useGame();
+  const audio = useAudio();
+  const audioInitializedRef = useRef(false);
+
+  // 初回ユーザーインタラクションで音声初期化 + BGM開始（どの画面でも）
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (audioInitializedRef.current) return;
+      audioInitializedRef.current = true;
+      audio.init();
+      audio.startBgm();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   switch (game.screen) {
     case 'home':

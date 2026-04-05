@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { GameState, Category, RankingEntry } from '@yacht/shared';
 import { GameStatus } from '../components/GameStatus/GameStatus';
 import { PlayerList } from '../components/PlayerList/PlayerList';
@@ -52,24 +52,11 @@ export function Game({
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentPlayerName = currentPlayer?.nickname ?? '';
   const audio = useAudio();
-  const audioInitializedRef = useRef(false);
 
-  // 初回ユーザーインタラクションで音声初期化 + BGM開始
+  // Gameコンポーネントアンマウント時にBGM停止
   useEffect(() => {
-    const handleFirstInteraction = () => {
-      if (audioInitializedRef.current) return;
-      audioInitializedRef.current = true;
-      audio.init();
-      audio.startBgm();
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
-    };
-
-    document.addEventListener('click', handleFirstInteraction);
-    document.addEventListener('touchstart', handleFirstInteraction);
     return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
+      audio.stopBgm();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -120,7 +107,7 @@ export function Game({
               onTestDiceChange={handleTestDiceChange}
               onRoll={onRoll}
               onToggleKeep={onToggleKeep}
-              scoreCard={gameState.scoreCards[playerId]}
+              scoreCard={gameState.scoreCards[currentPlayer?.id ?? playerId]}
             />
           </div>
         </div>

@@ -3,13 +3,16 @@
   align-items: center;
   justify-content: center;
   padding: 4px 12px;
-  background: var(--card-bg);
+  background: rgba(30, 20, 10, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(212, 160, 23, 0.15);
   border-radius: var(--radius-md);
 }
 
 .round {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-on-dark, #f0e8d8);
   letter-spacing: 0.04em;
 }

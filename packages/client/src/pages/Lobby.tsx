@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent } from 'react';
 import styles from './Lobby.module.css';
 
 interface LobbyProps {
@@ -11,6 +11,23 @@ interface LobbyProps {
 
 export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }: LobbyProps) {
   const [roomId, setRoomId] = useState('');
+  const composingRef = useRef(false);
+
+  const handleRoomIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (composingRef.current) return;
+    const filtered = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    setRoomId(filtered);
+  };
+
+  const handleCompositionStart = () => {
+    composingRef.current = true;
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    composingRef.current = false;
+    const filtered = (e.target as HTMLInputElement).value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    setRoomId(filtered);
+  };
 
   const handleJoinSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -51,11 +68,12 @@ export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }:
               className={styles.roomIdInput}
               type="text"
               value={roomId}
-              onChange={(e) => setRoomId(e.target.value.toUpperCase())}
+              onChange={handleRoomIdChange}
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={handleCompositionEnd}
               placeholder="ルームID"
               maxLength={4}
               autoComplete="off"
-              inputMode={'latin' as React.HTMLAttributes<HTMLInputElement>['inputMode']}
               autoCapitalize="characters"
             />
             <button
@@ -66,12 +84,6 @@ export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }:
               参加
             </button>
           </form>
-        </div>
-
-        <div className={styles.divider}>
-          <span className={styles.dividerLine} />
-          <span>または</span>
-          <span className={styles.dividerLine} />
         </div>
 
         <div className={styles.npcSection}>

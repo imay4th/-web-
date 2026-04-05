@@ -4,8 +4,10 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background: transparent;
-  border: 1px solid var(--border-color);
+  background: rgba(30, 20, 10, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(212, 160, 23, 0.15);
   border-radius: var(--radius-md);
 }
 
@@ -18,10 +20,11 @@
 /* エリアラベル */
 .areaLabel {
   font-size: 0.7rem;
-  color: var(--text-muted, #999);
+  color: var(--text-on-dark, #f0e8d8);
   letter-spacing: 0.05em;
   align-self: flex-start;
   margin-left: 4px;
+  opacity: 0.7;
 }
 
 /* キープエリア: 3+2配置 */
@@ -45,8 +48,8 @@
 .emptySlot {
   width: 64px;
   aspect-ratio: 1;
-  border: 2px dashed var(--border-color, #e0d8d0);
-  border-radius: 10px;
+  border: 2px dashed rgba(240, 232, 216, 0.3);
+  border-radius: 12px;
   background: transparent;
 }
 
@@ -54,7 +57,7 @@
 .separator {
   width: 100%;
   height: 1px;
-  background: var(--border-color, #e0d8d0);
+  background: rgba(240, 232, 216, 0.2);
 }
 
 /* ロールエリア */
@@ -68,28 +71,28 @@
 
 /* ターン開始時メッセージ */
 .preRollMessage {
-  color: var(--text-muted, #999);
+  color: var(--text-on-dark, #f0e8d8);
   font-size: 0.9rem;
   text-align: center;
   padding: 16px 0;
+  opacity: 0.7;
 }
 
 /* ダイス本体 */
 .die {
   width: 64px;
   aspect-ratio: 1;
-  background: #fff;
-  border-radius: 10px;
-  border: 3px solid #ccc;
+  background: linear-gradient(145deg, #ffffff, #f0ebe3);
+  border-radius: 12px;
+  border: 2px solid #d4c8b8;
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.15),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.05);
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
   cursor: default;
-  padding: 6px;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
+  padding: 8px;
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
   touch-action: manipulation;
 }
 
@@ -98,10 +101,11 @@
 }
 
 .dieInteractive:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.05);
+    0 8px 16px rgba(0, 0, 0, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.8);
 }
 
 .dieInteractive:active {
@@ -111,8 +115,10 @@
 .dieKept {
   border-color: var(--accent);
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.15),
-    0 0 8px rgba(74, 144, 217, 0.4);
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 0 3px var(--accent-glow),
+    0 0 15px var(--accent-glow),
+    inset 0 2px 0 rgba(255, 255, 255, 0.8);
 }
 
 .dieRolling {
@@ -159,7 +165,8 @@
   width: 65%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #333;
+  background: radial-gradient(circle at 35% 35%, #444, #1a1a1a);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .dotVisible {
@@ -177,14 +184,15 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--accent, #4A90D9);
+  background: var(--accent, #c5a44e);
+  box-shadow: 0 0 6px var(--accent-glow, rgba(197, 164, 78, 0.3));
 }
 
 .dotEmpty {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid var(--border-color, #e0d8d0);
+  border: 2px solid rgba(197, 164, 78, 0.3);
   background: transparent;
   box-sizing: border-box;
 }
@@ -199,11 +207,11 @@
   padding: 12px 24px;
   border-radius: var(--radius-md);
   font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #fff;
-  background: var(--btn-primary, #4A90D9);
-  border: none;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--btn-primary-text, #1a1410);
+  background: linear-gradient(135deg, #c5a44e, #dbc06a);
+  border: 1px solid rgba(255, 215, 0, 0.3);
   box-shadow: var(--shadow-md);
   transition:
     transform 0.15s ease,
@@ -212,11 +220,35 @@
   min-height: 48px;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.rollBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  transition: background-position 600ms ease;
+  pointer-events: none;
+}
+
+.rollBtn:hover:not(:disabled)::after {
+  background-position: -50% 0;
 }
 
 .rollBtn:hover:not(:disabled) {
-  background: var(--btn-primary-hover, #3a7bc8);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #d4b35d, #e8cf7a);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
 }
 
 .rollBtn:active:not(:disabled) {
@@ -231,7 +263,7 @@
 
 /* スコア選択促しメッセージ */
 .scoringPrompt {
-  color: var(--accent, #4A90D9);
+  color: var(--accent, #c5a44e);
   font-size: 1rem;
   font-weight: 600;
   text-align: center;
@@ -282,10 +314,21 @@
 
 /* 相手ターン中メッセージ */
 .opponentMessage {
-  color: var(--text-secondary, #666);
+  color: var(--text-on-dark, #f0e8d8);
   font-size: 0.9rem;
   text-align: center;
   padding: 12px 0;
+  opacity: 0.7;
+}
+
+@keyframes keepBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.dieKeepAnimation {
+  animation: keepBounce 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* スマホ用ダイスサイズ */
@@ -294,11 +337,11 @@
     width: 40px;
     padding: 4px;
     border-width: 2px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
   .emptySlot {
     width: 40px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
   .diceRow {
     gap: 4px;

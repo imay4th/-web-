@@ -21,10 +21,11 @@
 
 .modal {
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--card-border, rgba(212, 160, 23, 0.15));
+  border-top: 3px solid var(--accent, #c5a44e);
   border-radius: var(--radius-lg);
   padding: var(--space-xl) var(--space-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), var(--shadow-gold, 0 0 20px rgba(197, 164, 78, 0.2));
   width: 100%;
   max-width: 380px;
   animation: slideUp 0.3s ease;
@@ -53,7 +54,7 @@
   text-align: center;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #d4a017;
+  color: var(--accent, #c5a44e);
   margin-bottom: var(--space-md);
   letter-spacing: 0.05em;
 }
@@ -83,14 +84,14 @@
 /* 1位の項目を強調 */
 .winner {
   padding: var(--space-md);
-  border-color: #ffd700;
-  background: rgba(255, 215, 0, 0.08);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+  border-color: var(--accent, #c5a44e);
+  background: rgba(197, 164, 78, 0.08);
+  box-shadow: 0 0 12px var(--accent-glow, rgba(197, 164, 78, 0.3));
 }
 
 .gold {
-  border-color: #ffd700;
-  background: rgba(255, 215, 0, 0.06);
+  border-color: var(--accent, #c5a44e);
+  background: rgba(197, 164, 78, 0.06);
 }
 
 .silver {
@@ -134,14 +135,14 @@
 
 .rankScoreWinner {
   font-size: 1.5rem;
-  color: #b8860b;
+  color: var(--accent-dark, #a8892e);
 }
 
 .scoreDiff {
   text-align: center;
   font-size: 1rem;
   font-weight: 700;
-  color: #d4a017;
+  color: var(--accent, #c5a44e);
   margin-bottom: var(--space-lg);
   letter-spacing: 0.03em;
 }
@@ -170,9 +171,9 @@
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #fff;
-  background: var(--btn-primary);
-  border: none;
+  color: var(--btn-primary-text, #1a1410);
+  background: linear-gradient(135deg, #c5a44e, #dbc06a);
+  border: 1px solid rgba(255, 215, 0, 0.3);
   box-shadow: var(--shadow-md);
   transition:
     transform var(--transition-fast),
@@ -181,11 +182,35 @@
   min-height: 48px;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.playAgainBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  transition: background-position 600ms ease;
+  pointer-events: none;
+}
+
+.playAgainBtn:hover::after {
+  background-position: -50% 0;
 }
 
 .playAgainBtn:hover {
-  background: var(--btn-primary-hover);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #d4b35d, #e8cf7a);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
 }
 
 .playAgainBtn:active {
