@@ -2,6 +2,7 @@ services:
   - type: web
     name: yacht-game
     runtime: node
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: node packages/server/dist/index.js
     envVars:
