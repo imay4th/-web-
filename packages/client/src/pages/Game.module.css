@@ -47,29 +47,6 @@
   min-width: 0;
 }
 
-/* ミュート・テストボタン */
-.muteBtn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  border: 1px solid rgba(212, 160, 23, 0.2);
-  border-radius: 50%;
-  background: rgba(255, 252, 245, 0.15);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--text-on-dark);
-  cursor: pointer;
-  z-index: 10;
-  padding: 0;
-  line-height: 1;
-}
-
 .testModeBtn {
   position: absolute;
   top: 8px;

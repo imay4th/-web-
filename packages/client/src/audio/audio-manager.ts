@@ -15,7 +15,7 @@ class AudioManager {
   private bgmEndedHandler: (() => void) | null = null;
   private audioCtx: AudioContext | null = null;
   private seBufferCache = new Map<string, AudioBuffer>();
-  private _muted = false;
+  private _muted = true;
   private _seVolume = 0.5;
   private _bgmVolume = 0.3;
   private initialized = false;
@@ -52,6 +52,22 @@ class AudioManager {
     } catch {
       // ロード失敗は無視（再生時にフォールバック）
     }
+  }
+
+  get seVolume(): number { return this._seVolume; }
+  get bgmVolume(): number { return this._bgmVolume; }
+
+  setSeVolume(volume: number): void {
+    this._seVolume = Math.max(0, Math.min(1, volume));
+    this.saveSettings();
+  }
+
+  setBgmVolume(volume: number): void {
+    this._bgmVolume = Math.max(0, Math.min(1, volume));
+    if (this.bgm) {
+      this.bgm.volume = this._bgmVolume;
+    }
+    this.saveSettings();
   }
 
   get muted(): boolean { return this._muted; }

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import type { GameState, Category, RankingEntry } from '@yacht/shared';
 import { GameStatus } from '../components/GameStatus/GameStatus';
 import { PlayerList } from '../components/PlayerList/PlayerList';
@@ -6,7 +6,6 @@ import { DiceArea } from '../components/DiceArea/DiceArea';
 import { ScoreCard } from '../components/ScoreCard/ScoreCard';
 import { TurnBanner } from '../components/TurnBanner/TurnBanner';
 import { ResultModal } from '../components/ResultModal/ResultModal';
-import { useAudio } from '../audio/useAudio';
 import styles from './Game.module.css';
 
 interface GameProps {
@@ -51,25 +50,9 @@ export function Game({
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentPlayerName = currentPlayer?.nickname ?? '';
-  const audio = useAudio();
-
-  // Gameコンポーネントアンマウント時にBGM停止
-  useEffect(() => {
-    return () => {
-      audio.stopBgm();
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={styles.container}>
-      <button
-        type="button"
-        className={styles.muteBtn}
-        onClick={audio.toggleMute}
-        aria-label={audio.muted ? '音声ON' : '音声OFF'}
-      >
-        {audio.muted ? '\uD83D\uDD07' : '\uD83D\uDD0A'}
-      </button>
       <button
         type="button"
         className={styles.testModeBtn}

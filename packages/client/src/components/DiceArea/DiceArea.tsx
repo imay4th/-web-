@@ -101,6 +101,15 @@ export function DiceArea({
     };
   }, []);
 
+  // スコア記録時にjustRolledをリセット（HandAnnounce再表示防止）
+  const prevScoreCardRef = useRef(scoreCard);
+  useEffect(() => {
+    if (prevScoreCardRef.current !== scoreCard) {
+      setJustRolled(false);
+      prevScoreCardRef.current = scoreCard;
+    }
+  }, [scoreCard]);
+
   const allKept = dice.length > 0 && dice.every((d) => d.kept);
   const canRoll =
     isMyTurn &&

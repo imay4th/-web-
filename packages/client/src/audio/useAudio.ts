@@ -3,10 +3,14 @@ import { audioManager } from './audio-manager';
 
 export function useAudio() {
   const [muted, setMutedState] = useState(audioManager.muted);
+  const [seVolume, setSeVolumeState] = useState(audioManager.seVolume);
+  const [bgmVolume, setBgmVolumeState] = useState(audioManager.bgmVolume);
 
   const init = useCallback(() => {
     audioManager.init();
     setMutedState(audioManager.muted);
+    setSeVolumeState(audioManager.seVolume);
+    setBgmVolumeState(audioManager.bgmVolume);
   }, []);
 
   const toggleMute = useCallback(() => {
@@ -27,5 +31,15 @@ export function useAudio() {
     audioManager.stopBgm();
   }, []);
 
-  return { muted, init, toggleMute, play, startBgm, stopBgm };
+  const setSeVolume = useCallback((v: number) => {
+    audioManager.setSeVolume(v);
+    setSeVolumeState(audioManager.seVolume);
+  }, []);
+
+  const setBgmVolume = useCallback((v: number) => {
+    audioManager.setBgmVolume(v);
+    setBgmVolumeState(audioManager.bgmVolume);
+  }, []);
+
+  return { muted, seVolume, bgmVolume, init, toggleMute, play, startBgm, stopBgm, setSeVolume, setBgmVolume };
 }

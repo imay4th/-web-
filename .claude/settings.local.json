@@ -16,7 +16,8 @@
       "Bash(curl -sL -o dice-roll.mp3 \"https://soundeffect-lab.info/sound/various/mp3/dice1.mp3\" -w \"%{http_code}\")",
       "Bash(curl:*)",
       "Bash(npx -w packages/shared tsc --noEmit)",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(git push:*)"
     ]
   }
 }

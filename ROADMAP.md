@@ -1,6 +1,6 @@
 # ヨット 開発ロードマップ
 
-最終更新: 2026-04-06 (2)
+最終更新: 2026-04-06 (3)
 
 ## ⚠️ 進捗管理ルール
 
@@ -173,6 +173,33 @@
 
 ---
 
+## Phase 10: 音声システム改善 + UI/ロジックバグ修正
+
+### 10.1 スマホ版ダイス表示崩れ修正 [S] — ✅ 完了
+- `.die`に`display: flex`追加（button要素内height:100%問題解決）
+- `.dieGrid`を`height: 100%`→`aspect-ratio: 1`に変更（iOS Safariフォールバック）
+- モバイルメディアクエリに`aspect-ratio: 1`を明示追加（640px以下・374px以下）
+
+### 10.2 BGMデフォルトOFF [S] — ✅ 完了
+- `audio-manager.ts`の`_muted`初期値を`true`に変更
+
+### 10.3 BGMボタン全画面化 [M] — ✅ 完了
+- `AudioToggleButton`コンポーネント新規作成（`position: fixed`で全画面表示）
+- App.tsxにAudioToggleButton配置（全画面で利用可能）
+- Game.tsxからmuteBtnとstopBgm()を削除
+
+### 10.4 音量設定ポップアップ [M] — ✅ 完了
+- `audio-manager.ts`にseVolume/bgmVolumeのgetter/setter追加
+- `useAudio.ts`にvolume state追加
+- `AudioPanel`コンポーネント新規作成（BGMオン/オフ + BGM音量 + SE音量スライダー）
+- AudioToggleButtonクリックでパネル表示/非表示
+
+### 10.5 役名表示ズレ修正 [S] — ✅ 完了
+- scoreCard変更時に`justRolled`をfalseにリセットするuseEffect追加
+- スコア記録後にHandAnnounceが再表示されるバグを修正
+
+---
+
 ## 依存関係グラフ
 
 ```
@@ -199,17 +226,14 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-05 | Phase 8: UI改善 "Royal Table" | テーマ基盤→プレゲーム画面→ゲーム画面→アニメーションの4段階で全面改善。ビルド・テスト全パス |
 | 2026-04-06 | Phase 9: UI/UXバグ修正（7件） | BGM永続再生、役名表示ロジック、ダイスアニメーション、キープアニメ削除、PlayerList均等幅、ルームID IME対応、参加ボタンはみ出し修正。Playwright視覚検証16/16パス |
 | 2026-04-06 | Phase 9.8: 再修正3件 | Fix A: BGM初期化をApp.tsxに移動。Fix B: useAudio()の不安定参照によるuseEffectタイマークリア問題をaudioRefで解決。Fix C: ロールエリアdiceRow常時2行化。ビルド+テスト全パス |
+| 2026-04-06 | Phase 10: 音声改善+バグ修正5件 | ダイスCSS修正(display:flex+aspect-ratio)、BGMデフォルトOFF、BGMボタン全画面化(AudioToggleButton)、音量設定ポップアップ(AudioPanel)、役名表示ズレ修正(scoreCard変更時justRolledリセット)。ビルド+テスト75件全パス |
 
 ---
 
 ## 次のTodo
 
-- [x] ブラウザで実際の対戦テスト（ngrokで確認済み）
-- [x] UI改善 "Royal Table"（Phase 8完了）
-- [x] UI/UXバグ修正7件（Phase 9完了、Playwright検証済み）
-- [x] Phase 9 再修正3件（9.8完了、ビルド+テスト全パス）
-- [ ] ブラウザで再修正後の手動テスト（31パターン: BGM/演出/キープアニメ）
-- [ ] 未コミット変更のコミット（Phase 8 + Phase 9 + 9.8）
+- [x] Phase 10: 音声システム改善 + UI/ロジックバグ修正5件
+- [ ] ブラウザで手動テスト（ダイス表示・BGMボタン・音量パネル・役名表示）
 - [ ] Renderにデプロイ（恒久的な公開URL）
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）
