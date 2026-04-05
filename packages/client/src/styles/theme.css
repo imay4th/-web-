@@ -1,0 +1,165 @@
+/* 世界のアソビ大全51 ヨット風テーマ */
+
+:root {
+  /* 背景 - 温かみのあるウッドテーブル */
+  --bg-table: #6b5344;
+  --bg-table-dark: #4a3728;
+
+  /* カード・コンテナ背景 */
+  --card-bg: #faf6f0;
+  --card-bg-hover: #f0ebe3;
+  --modal-bg: rgba(0, 0, 0, 0.5);
+
+  /* テキストカラー */
+  --text-primary: #2c2c2c;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+
+  /* アクセントカラー - ブルー */
+  --accent: #4A90D9;
+  --accent-dark: #3a7bc8;
+  --accent-light: #6ba3e0;
+
+  /* セカンダリアクセント */
+  --accent-red: #d9534f;
+  --accent-red-hover: #c9302c;
+
+  /* ボタン */
+  --btn-primary: #4A90D9;
+  --btn-primary-hover: #3a7bc8;
+  --btn-danger: #d9534f;
+  --btn-danger-hover: #c9302c;
+  --btn-secondary: #8c8c8c;
+  --btn-secondary-hover: #737373;
+
+  /* シャドウ */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+  /* ボーダー */
+  --border-color: #e0d8d0;
+  --border-light: #ece7e0;
+
+  /* 角丸 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* スペーシング */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* トランジション */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ウッドテーブル背景 */
+body {
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    var(--bg-table) 0%,
+    var(--bg-table-dark) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* クリーンなカードスタイル */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* フラットボタン */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  min-height: 44px;
+  min-width: 44px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--btn-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--btn-primary-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger {
+  background: var(--btn-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--btn-danger-hover);
+}
+
+.btn-secondary {
+  background: var(--btn-secondary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--btn-secondary-hover);
+}
+
+/* クリーンな入力フィールド */
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  min-height: 44px;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.06),
+    0 0 0 3px rgba(74, 144, 217, 0.15);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}

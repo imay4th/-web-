@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(npx kill-port:*)",
+      "Bash(ngrok version:*)",
+      "Bash(where ngrok:*)",
+      "Bash(ngrok config:*)",
+      "Bash(xargs wc:*)",
+      "Bash(python3:*)",
+      "Bash(xargs grep:*)",
+      "Bash(mkdir -p /c/dev/ヨット/packages/client/src/audio)",
+      "Bash(mkdir -p /c/dev/ヨット/packages/client/public/sounds)",
+      "Bash(curl -sL -o dice-roll.mp3 \"https://soundeffect-lab.info/sound/various/mp3/dice1.mp3\" -w \"%{http_code}\")",
+      "Bash(curl:*)",
+      "Bash(npx -w packages/shared tsc --noEmit)",
+      "Bash(powershell.exe:*)"
+    ]
+  }
+}

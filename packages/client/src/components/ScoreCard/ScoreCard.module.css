@@ -1,0 +1,320 @@
+/* === テーブルコンテナ === */
+.container {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* === ヘッダー行 === */
+.headerRow {
+  background: #f0ebe3;
+}
+
+.headerCell {
+  border: 1px solid var(--border-color);
+  padding: 6px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.headerCellCategory {
+  text-align: left;
+}
+
+.headerCellPlayer {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerCellActive {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* === 行の基本 === */
+.row {
+  transition: background 0.15s ease;
+}
+
+.cell {
+  border: 1px solid var(--border-light);
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.categoryCell {
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* === 自分のスコアセル（タップ可能） === */
+.myScoreCell {
+  cursor: default;
+  position: relative;
+}
+
+.myScoreCellSelectable {
+  cursor: pointer;
+  background: rgba(74, 144, 217, 0.08);
+}
+
+.myScoreCellSelectable:hover {
+  background: rgba(74, 144, 217, 0.12);
+}
+
+.myScoreCellSelectable:active {
+  background: rgba(74, 144, 217, 0.18);
+}
+
+/* === ペンディング（確認ステップ）行 === */
+.pendingRow {
+  background: rgba(74, 144, 217, 0.2);
+}
+
+.pendingCell {
+  position: relative;
+}
+
+.confirmBtn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: 4px;
+  transition: background 0.15s ease;
+}
+
+.confirmBtn:hover {
+  background: var(--accent-dark);
+}
+
+/* === プレビュースコア === */
+.scorePreview {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* === 記録済みセル === */
+.scoreRecorded {
+  background: #f5f3ef;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* === 0点の×マーク === */
+.scoreZero {
+  background: #f5f3ef;
+  color: var(--accent-red);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* === 未記録+選択不可 === */
+.scoreDash {
+  color: var(--text-muted);
+}
+
+/* === 小計行 === */
+.subtotalRow {
+  background: #f5f0e8;
+}
+
+.subtotalRow .cell {
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.subtotalRow .categoryCell {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+/* === ボーナス行 === */
+.bonusRow {
+  background: #f5f0e8;
+}
+
+.bonusRow .cell {
+  border: 1px solid var(--border-color);
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.bonusRow .categoryCell {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+/* === 合計行 === */
+.totalRow {
+  background: #f0ebe3;
+}
+
+.totalRow .cell {
+  border: 1px solid var(--border-color);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.totalRow .categoryCell {
+  font-weight: 900;
+  font-size: 1rem;
+}
+
+.totalValue {
+  color: var(--accent);
+  font-weight: 900;
+  font-size: 1.125rem;
+}
+
+/* === アニメーション: スコア記入 === */
+.scoreJustRecorded {
+  animation: scoreAppear 0.4s ease-out;
+}
+
+@keyframes scoreAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rowJustScored {
+  animation: rowFlash 0.6s ease-out;
+}
+
+@keyframes rowFlash {
+  0% {
+    background: rgba(255, 215, 0, 0.2);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* === アニメーション: ボーナス達成 === */
+.bonusHighlight {
+  animation: bonusGlow 1s ease-out;
+}
+
+@keyframes bonusGlow {
+  0% {
+    background: rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    background: #f5f0e8;
+  }
+}
+
+/* === ボーナス条件・進捗表示 === */
+.bonusCondition {
+  font-size: 0.65rem;
+  color: var(--text-muted, #999);
+  font-weight: 400;
+}
+
+.bonusProgress {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+}
+
+.bonusValue {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.bonusAchieved {
+  color: #d4a017;
+  font-weight: 700;
+}
+
+/* === セパレータ（上段/下段の区切り） === */
+.separatorRow {
+  height: 2px;
+}
+
+.separatorRow .cell {
+  padding: 0;
+  border: none;
+  background: var(--border-color);
+  height: 2px;
+}
+
+/* スマホ用コンパクト表示 */
+@media (max-width: 640px) {
+  .table {
+    font-size: 0.7rem;
+  }
+  .table th, .table td {
+    padding: 3px 3px;
+  }
+  .categoryCell {
+    max-width: 64px;
+    font-size: 0.65rem;
+  }
+  .headerCell {
+    padding: 3px 2px;
+    font-size: 0.6rem;
+  }
+  .subtotalRow .cell,
+  .bonusRow .cell {
+    font-size: 0.7rem;
+  }
+  .bonusCondition {
+    font-size: 0.55rem;
+  }
+  .bonusProgress {
+    font-size: 0.65rem;
+  }
+  .confirmBtn {
+    padding: 2px 6px;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 374px) {
+  .table {
+    font-size: 0.65rem;
+  }
+  .categoryCell {
+    max-width: 56px;
+    font-size: 0.6rem;
+  }
+}

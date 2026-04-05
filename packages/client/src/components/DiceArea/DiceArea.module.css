@@ -1,0 +1,332 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+/* 相手ターン中のグレーアウト */
+.notMyTurn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* エリアラベル */
+.areaLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted, #999);
+  letter-spacing: 0.05em;
+  align-self: flex-start;
+  margin-left: 4px;
+}
+
+/* キープエリア: 3+2配置 */
+.keptArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 64px;
+  align-items: center;
+}
+
+/* ダイス行（3+2配置） */
+.diceRow {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  align-items: center;
+}
+
+/* 空枠プレースホルダー */
+.emptySlot {
+  width: 64px;
+  aspect-ratio: 1;
+  border: 2px dashed var(--border-color, #e0d8d0);
+  border-radius: 10px;
+  background: transparent;
+}
+
+/* 区切り線 */
+.separator {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color, #e0d8d0);
+}
+
+/* ロールエリア */
+.rollArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 64px;
+  align-items: center;
+}
+
+/* ターン開始時メッセージ */
+.preRollMessage {
+  color: var(--text-muted, #999);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ダイス本体 */
+.die {
+  width: 64px;
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 10px;
+  border: 3px solid #ccc;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.05);
+  cursor: default;
+  padding: 6px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+  touch-action: manipulation;
+}
+
+.dieInteractive {
+  cursor: pointer;
+}
+
+.dieInteractive:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dieInteractive:active {
+  transform: translateY(0);
+}
+
+.dieKept {
+  border-color: var(--accent);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 8px rgba(74, 144, 217, 0.4);
+}
+
+.dieRolling {
+  animation: diceRoll 600ms ease-out both;
+}
+
+@keyframes diceRoll {
+  0%   { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0.5; }
+  15%  { transform: translateY(-24px) rotate(150deg) scale(1.1); opacity: 1; }
+  35%  { transform: translateY(0) rotate(360deg) scale(0.95); }
+  50%  { transform: translateY(-10px) rotate(480deg) scale(1.05); }
+  70%  { transform: translateY(0) rotate(600deg) scale(0.97); }
+  85%  { transform: translateY(-3px) rotate(680deg) scale(1.01); }
+  100% { transform: translateY(0) rotate(720deg) scale(1); }
+}
+
+/* ヨット達成エフェクト */
+.dieYacht {
+  animation: yachtGlow 0.6s ease-in-out 2;
+}
+
+@keyframes yachtGlow {
+  0%, 100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4); }
+}
+
+/* 3x3 グリッドでドット配置 */
+.dieGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.dotCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.dot {
+  width: 65%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #333;
+}
+
+.dotVisible {
+  /* マーカー用 - ドットが表示される */
+}
+
+/* ロール残数ドットインジケーター */
+.rollDots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.dotFilled {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent, #4A90D9);
+}
+
+.dotEmpty {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color, #e0d8d0);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* ロールボタン */
+.rollBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--btn-primary, #4A90D9);
+  border: none;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+  min-height: 48px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rollBtn:hover:not(:disabled) {
+  background: var(--btn-primary-hover, #3a7bc8);
+  box-shadow: var(--shadow-lg);
+}
+
+.rollBtn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.rollBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* スコア選択促しメッセージ */
+.scoringPrompt {
+  color: var(--accent, #4A90D9);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 0;
+  animation: promptPulse 2s ease-in-out infinite;
+}
+
+@keyframes promptPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* テストモードパネル */
+.testDicePanel {
+  width: 100%;
+  padding: 8px;
+  background: rgba(255, 200, 0, 0.1);
+  border: 1px dashed #d4a017;
+  border-radius: var(--radius-md, 8px);
+}
+
+.testDiceLabel {
+  font-size: 0.75rem;
+  color: #d4a017;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.testDiceSelectors {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.testDiceSelect {
+  width: 40px;
+  height: 36px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 2px solid #d4a017;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+/* 相手ターン中メッセージ */
+.opponentMessage {
+  color: var(--text-secondary, #666);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* スマホ用ダイスサイズ */
+@media (max-width: 640px) {
+  .die {
+    width: 40px;
+    padding: 4px;
+    border-width: 2px;
+    border-radius: 6px;
+  }
+  .emptySlot {
+    width: 40px;
+    border-radius: 6px;
+  }
+  .diceRow {
+    gap: 4px;
+  }
+  .container {
+    padding: var(--space-sm);
+    gap: 4px;
+  }
+  .rollBtn {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    min-height: 36px;
+  }
+  .keptArea {
+    min-height: 40px;
+  }
+  .rollArea {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 374px) {
+  .die {
+    width: 34px;
+    padding: 3px;
+  }
+  .emptySlot {
+    width: 34px;
+  }
+}
+

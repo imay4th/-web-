@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: yacht-game
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node packages/server/dist/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production

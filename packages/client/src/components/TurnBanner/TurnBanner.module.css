@@ -1,0 +1,35 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 200;
+  animation: bannerFade 1.6s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes bannerFade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.banner {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.1em;
+  animation: bannerScale 1.6s ease forwards;
+}
+
+@keyframes bannerScale {
+  0% { transform: scale(0.8); opacity: 0; }
+  15% { transform: scale(1.05); opacity: 1; }
+  25% { transform: scale(1); }
+  75% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0; }
+}

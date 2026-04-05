@@ -1,0 +1,228 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl) var(--space-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 380px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.congrats {
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #d4a017;
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.05em;
+}
+
+.rankingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.rankingItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--card-bg-hover);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  transition: background var(--transition-fast);
+}
+
+.self {
+  background: rgba(74, 144, 217, 0.08);
+}
+
+/* 1位の項目を強調 */
+.winner {
+  padding: var(--space-md);
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.08);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+}
+
+.gold {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.06);
+}
+
+.silver {
+  border-color: #c0c0c0;
+  background: rgba(192, 192, 192, 0.06);
+}
+
+.bronze {
+  border-color: #cd7f32;
+  background: rgba(205, 127, 50, 0.06);
+}
+
+.rankBadge {
+  font-size: 1.5rem;
+  min-width: 36px;
+  text-align: center;
+  line-height: 1;
+}
+
+.rankBadgeWinner {
+  font-size: 2rem;
+  min-width: 44px;
+}
+
+.rankName {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankScore {
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.rankScoreWinner {
+  font-size: 1.5rem;
+  color: #b8860b;
+}
+
+.scoreDiff {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #d4a017;
+  margin-bottom: var(--space-lg);
+  letter-spacing: 0.03em;
+}
+
+.scoreDiffLose {
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.playAgainBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--btn-primary);
+  border: none;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+  min-height: 48px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.playAgainBtn:hover {
+  background: var(--btn-primary-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.playAgainBtn:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.lobbyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+  min-height: 44px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lobbyBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--btn-secondary);
+  background: var(--card-bg-hover);
+}
+
+.credit {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted, #999);
+  margin-top: var(--space-md);
+}

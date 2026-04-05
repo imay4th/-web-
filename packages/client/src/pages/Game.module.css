@@ -1,0 +1,96 @@
+/* ゲーム画面 */
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ゲームエリア: テーブル左 + ダイス右 */
+.gameArea {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-sm);
+}
+
+/* スコアカラム */
+.scoreColumn {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ダイスカラム */
+.diceColumn {
+  min-width: 0;
+}
+
+/* ミュート・テストボタン */
+.muteBtn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 1px solid var(--border-color, #e0d8d0);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+}
+
+.testModeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #d4a017;
+  border-radius: 4px;
+  background: rgba(255, 200, 0, 0.1);
+  color: #d4a017;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* スマホ (640px以下) */
+@media (max-width: 640px) {
+  .gameArea {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 4px;
+  }
+
+  .content {
+    gap: 4px;
+    padding: 4px;
+  }
+}
+
+/* PC (768px以上) */
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .gameArea {
+    gap: var(--space-md);
+  }
+}

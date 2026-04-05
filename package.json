@@ -1,0 +1,26 @@
+{
+  "name": "yacht-game",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/server",
+    "packages/client"
+  ],
+  "scripts": {
+    "build": "npm run build:shared && npm run build:client && npm run build:server",
+    "build:shared": "npm run build -w packages/shared",
+    "build:client": "npm run build -w packages/client",
+    "build:server": "npm run build -w packages/server",
+    "dev:server": "npm run dev -w packages/server",
+    "dev:client": "npm run dev -w packages/client",
+    "lint": "eslint packages/*/src --ext .ts,.tsx",
+    "test": "npm run test -w packages/shared"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.0",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.58.0"
+  }
+}
