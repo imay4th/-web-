@@ -307,13 +307,16 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-06 | Phase 12.2: DPソルバー実装 | optimal-solver.ts(後ろ向き帰納法DP、252ダイスインデックス+462キープタプル+疎ロール分布)、generate-table.ts(CLIスクリプト)、optimal-table-loader.ts(キャッシュ付きローダー)。計算8.2秒、テーブル2MB、最適期待値190.01点。ビルド+テスト75件全パス |
 | 2026-04-06 | Phase 12.3: ExpertStrategy改修+サーバー統合 | ExpertStrategyをdecideOptimal/decideHeuristicの2系統化。createNpcStrategyにoptionalTable引数追加。サーバー: index.ts→handler.ts→game-handler.ts→NpcControllerへテーブル伝播。テーブル未生成時はヒューリスティックにフォールバック。ビルド+テスト75件全パス |
 | 2026-04-06 | Phase 12.4: テスト+検証 | ソルバー単体テスト7件(基底ケース,期待値範囲,単調性,ボーナス反映)+シリアライズ4件+Strategy統合7件=18件追加。ビルド成功、テスト93件全パス |
+| 2026-04-06 | Phase 14: 音量修正+IME修正 | BGM音量auto-unmute(ミュート中スライダー操作で自動解除)、SEプレビュー音(300msデバウンス)、音量ラベル%表示、スライダーtouchターゲット拡大。スマホIME二重入力修正(compositionRefガード復活+onBlur安全リセット)。ビルド+テスト93件全パス |
 
 ---
 
 ## 次のTodo
 
-- [ ] ブラウザで手動テスト（Phase 11 + NPC対戦確認 + 最適戦略NPC動作確認）
-- [ ] Renderにデプロイ（恒久的な公開URL）
+- [x] ブラウザで手動テスト（Phase 11 + NPC対戦確認 + 最適戦略NPC動作確認）
+- [x] Renderにデプロイ（恒久的な公開URL）
+- [x] 音量調節機能修正（auto-unmute + SEプレビュー）
+- [x] スマホIME二重入力修正
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）
 

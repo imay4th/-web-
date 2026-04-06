@@ -9,6 +9,7 @@ interface AudioPanelProps {
 export function AudioPanel({ onClose }: AudioPanelProps) {
   const audio = useAudio();
   const panelRef = useRef<HTMLDivElement>(null);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -16,8 +17,6 @@ export function AudioPanel({ onClose }: AudioPanelProps) {
         onClose();
       }
     };
-    // Use setTimeout to avoid the panel being immediately closed
-    // by the same click that opened it
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleOutsideClick);
     }, 0);
@@ -40,7 +39,7 @@ export function AudioPanel({ onClose }: AudioPanelProps) {
         </button>
       </div>
       <div className={styles.row}>
-        <span className={styles.label}>BGM音量</span>
+        <span className={styles.label}>BGM音量 {Math.round(audio.bgmVolume * 100)}%</span>
         <input
           type="range"
           min="0"
@@ -52,14 +51,20 @@ export function AudioPanel({ onClose }: AudioPanelProps) {
         />
       </div>
       <div className={styles.row}>
-        <span className={styles.label}>SE音量</span>
+        <span className={styles.label}>SE音量 {Math.round(audio.seVolume * 100)}%</span>
         <input
           type="range"
           min="0"
           max="1"
           step="0.05"
           value={audio.seVolume}
-          onChange={(e) => audio.setSeVolume(Number(e.target.value))}
+          onChange={(e) => {
+            audio.setSeVolume(Number(e.target.value));
+            clearTimeout(previewTimerRef.current);
+            previewTimerRef.current = setTimeout(() => {
+              audio.playPreview('diceKeep');
+            }, 300);
+          }}
           className={styles.slider}
         />
       </div>

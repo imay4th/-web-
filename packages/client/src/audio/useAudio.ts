@@ -39,7 +39,12 @@ export function useAudio() {
   const setBgmVolume = useCallback((v: number) => {
     audioManager.setBgmVolume(v);
     setBgmVolumeState(audioManager.bgmVolume);
+    setMutedState(audioManager.muted);  // auto-unmute反映
   }, []);
 
-  return { muted, seVolume, bgmVolume, init, toggleMute, play, startBgm, stopBgm, setSeVolume, setBgmVolume };
+  const playPreview = useCallback((name: Parameters<typeof audioManager.play>[0]) => {
+    audioManager.playPreview(name);
+  }, []);
+
+  return { muted, seVolume, bgmVolume, init, toggleMute, play, startBgm, stopBgm, setSeVolume, setBgmVolume, playPreview };
 }

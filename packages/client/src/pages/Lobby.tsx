@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent } from 'react';
 import styles from './Lobby.module.css';
 
 interface LobbyProps {
@@ -11,10 +11,27 @@ interface LobbyProps {
 
 export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }: LobbyProps) {
   const [roomId, setRoomId] = useState('');
+  const composingRef = useRef(false);
 
   const handleRoomIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (composingRef.current) return;
     const filtered = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     setRoomId(filtered);
+  };
+
+  const handleCompositionStart = () => {
+    composingRef.current = true;
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    composingRef.current = false;
+    const filtered = (e.target as HTMLInputElement).value
+      .replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    setRoomId(filtered);
+  };
+
+  const handleBlur = () => {
+    composingRef.current = false;
   };
 
   const handleJoinSubmit = (e: FormEvent) => {
@@ -58,6 +75,9 @@ export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }:
               inputMode="text"
               value={roomId}
               onChange={handleRoomIdChange}
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={handleCompositionEnd}
+              onBlur={handleBlur}
               placeholder="ルームID"
               maxLength={4}
               autoComplete="off"

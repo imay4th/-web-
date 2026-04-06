@@ -64,8 +64,13 @@ class AudioManager {
 
   setBgmVolume(volume: number): void {
     this._bgmVolume = Math.max(0, Math.min(1, volume));
+    // ミュート中にスライダーを動かしたら自動unmute（volume=0は除く）
+    if (this._muted && volume > 0) {
+      this._muted = false;
+    }
     if (this.bgm) {
       this.bgm.volume = this._bgmVolume;
+      this.bgm.muted = this._muted;
     }
     this.saveSettings();
   }
@@ -139,6 +144,25 @@ class AudioManager {
       });
     };
     tryPlay(3);
+  }
+
+  /** SE音量確認用プレビュー再生（ミュート状態を無視） */
+  playPreview(name: SoundName): void {
+    const path = SE_FILES[name];
+    if (!path || !this.audioCtx) return;
+    if (this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume().catch(() => {});
+    }
+    const buffer = this.seBufferCache.get(path);
+    if (buffer) {
+      const source = this.audioCtx.createBufferSource();
+      source.buffer = buffer;
+      const gainNode = this.audioCtx.createGain();
+      gainNode.gain.value = this._seVolume;
+      source.connect(gainNode);
+      gainNode.connect(this.audioCtx.destination);
+      source.start(0);
+    }
   }
 
   /** BGM停止 */
