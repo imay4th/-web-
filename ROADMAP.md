@@ -1,6 +1,6 @@
 # ヨット 開発ロードマップ
 
-最終更新: 2026-04-06 (8)
+最終更新: 2026-04-06 (10)
 
 ## ⚠️ 進捗管理ルール
 
@@ -311,6 +311,34 @@
 
 ---
 
+## Phase 16: ルームID入力 iOS二重入力バグの根本修正
+
+### 16.1 iOS二重入力バグ根本修正 [S] — ✅ 完了
+- `autoCapitalize="characters"` → `autoCapitalize="off"` に変更（iOS OS側composition二重発火の根本原因除去）
+- `autoCorrect="off"` / `spellCheck={false}` 追加（iOS予測変換・スペルチェックによる追加イベント防止）
+- CSS `text-transform: uppercase` を削除（JS `toUpperCase()` に一元化、三重変換解消）
+- compositionガードのON/OFF振り子（Phase 9.6→11.1→14.2→15.2）を脱却した根本修正
+
+---
+
+## Phase 17: 画像ダイステーマ基盤 + エヴァ初号機
+
+### 17.1 画像ダイステーマ基盤 + eva01 追加 [M] — ✅ 完了
+- `DiceTheme` 型に `imagePath?: string` を追加（画像テーマの判定フィールド）
+- `Die.tsx` に `diceThemeId` prop 追加、`imagePath` がある場合は `<img>` 描画に分岐
+- `DiceArea.tsx` で `useTheme()` → `selection.diceId` を取得し、Die 全3カ所に渡す
+- `.dieImageMode` CSS で background/border/padding を透過化、キープグローは box-shadow で維持
+- `ThemePanel` のプレビューも `<img>` に分岐
+- `packages/client/public/dice/eva01/1.png` 〜 `6.png` を配置
+- 将来の追加: `public/dice/<id>/` に配置 + `theme-presets.ts` に1エントリのみで完結
+
+### 17.2 画像ダイスのバグ修正3件 [S] — ✅ 完了
+- **テーマ切替が効かない**: ThemeManager に subscribe/notify パターン追加。`useTheme()` が全コンポーネントで同期更新されるよう修正
+- **ダイスが枠より小さい**: `.dieImage` に `transform: scale(1.15)` 適用、PNG内余白を切り取り。画像モード時ダイスサイズ拡大（PC:76px、スマホ:52px、小型:44px）
+- **黄色い枠**: `.die.dieImageMode.dieNewlyKept` 追加、`!important` box-shadow をアクセントグローに統一
+
+---
+
 ## 依存関係グラフ
 
 ```
@@ -347,6 +375,9 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-06 | Phase 12.4: テスト+検証 | ソルバー単体テスト7件(基底ケース,期待値範囲,単調性,ボーナス反映)+シリアライズ4件+Strategy統合7件=18件追加。ビルド成功、テスト93件全パス |
 | 2026-04-06 | Phase 14: 音量修正+IME修正 | BGM音量auto-unmute(ミュート中スライダー操作で自動解除)、SEプレビュー音(300msデバウンス)、音量ラベル%表示、スライダーtouchターゲット拡大。スマホIME二重入力修正(compositionRefガード復活+onBlur安全リセット)。ビルド+テスト93件全パス |
 | 2026-04-06 | Phase 15: iOS修正3件+スコア確定ポップアップ | BGM音量GainNode化(iOS Safari対応)、ルームID入力composition完全削除(iOS永久ブロック修正)、TurnBannerゲーム終了後非表示修正、ScoreAnnounceコンポーネント新規(役名・点数・プレイヤー名2.5秒表示)。ビルド+テスト93件全パス |
+| 2026-04-06 | Phase 16: ルームID入力iOS二重入力バグ根本修正 | autoCapitalize="characters"→"off"(iOS OS側composition二重発火の根本原因除去)、autoCorrect="off"+spellCheck={false}追加、CSS text-transform:uppercase削除(toUpperCase()に一元化)。Phase 9.6〜15.2の振り子を脱却。ビルド+テスト93件全パス |
+| 2026-04-06 | Phase 17: 画像ダイステーマ基盤+eva01追加 | DiceTheme型にimagePath追加、Die.tsx分岐描画、DiceArea.tsxでuseTheme連携、CSS dieImageMode追加、ThemePanel画像プレビュー対応。eva01（初号機イラスト調）を追加。将来の追加は2ステップで完結。ビルド成功 |
+| 2026-04-06 | Phase 17.2: 画像ダイスバグ修正3件 | テーマ切替不可→ThemeManagerにsubscribe/notifyパターン追加。ダイス小さい→scale(1.15)+サイズ拡大(76/52/44px)。黄色枠→dieImageMode.dieNewlyKeptで!important box-shadow統一。ビルド成功 |
 
 ---
 
@@ -360,6 +391,9 @@ Phase 5 → Phase 6 → Phase 7
 - [x] ルームID入力iOS修正（composition完全削除）
 - [x] TurnBannerゲーム終了後表示修正
 - [x] スコア確定ポップアップ（ScoreAnnounce新規）
+- [x] ルームID入力iOS二重入力バグ根本修正（autoCapitalize/autoCorrect/text-transform三重変換解消）
+- [x] 画像ダイステーマ基盤 + エヴァ初号機（eva01）追加
+- [ ] 追加ダイスデザイン（eva01_real、eva00等）
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）
 

@@ -93,6 +93,41 @@
   display: flex;
 }
 
+/* 画像ダイステーマ: CSS変数スタイルを無効化 */
+.die.dieImageMode {
+  width: 76px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+.die.dieImageMode.dieKept {
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 15px var(--accent-glow);
+}
+
+.die.dieImageMode.dieInteractive:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dieImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 0;
+  pointer-events: none;
+  transform: scale(1.15);
+}
+
+/* 画像モードでは新規キープ黄色枠を抑制 */
+.die.dieImageMode.dieNewlyKept {
+  border: none !important;
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 15px var(--accent-glow) !important;
+}
+
+
 .dieInteractive {
   cursor: pointer;
 }
@@ -360,6 +395,9 @@
   .rollArea {
     min-height: 40px;
   }
+  .die.dieImageMode {
+    width: 52px;
+  }
 }
 
 @media (max-width: 374px) {
@@ -375,6 +413,9 @@
   .ghostSlot {
     width: 34px;
     height: 34px;
+  }
+  .die.dieImageMode {
+    width: 44px;
   }
 }
 

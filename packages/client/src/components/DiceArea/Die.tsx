@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { diceThemes } from '../../theme/theme-presets';
 import styles from './DiceArea.module.css';
 
 interface DieProps {
@@ -8,6 +9,7 @@ interface DieProps {
   canToggle: boolean;
   rolling: boolean;
   index: number;
+  diceThemeId?: string;
   isYacht?: boolean;
   displayIndex?: number;   // ロールエリア内の表示順（アニメーション遅延用）
   isGhost?: boolean;       // ゴースト表示
@@ -25,18 +27,21 @@ const DOT_POSITIONS: Record<number, number[][]> = {
   6: [[0, 0], [1, 0], [2, 0], [0, 2], [1, 2], [2, 2]],
 };
 
-export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht, displayIndex, isGhost, isNewlyKept, onToggleKeep }: DieProps) {
+export function Die({ value, kept, isMyTurn, canToggle, rolling, index, diceThemeId, isYacht, displayIndex, isGhost, isNewlyKept, onToggleKeep }: DieProps) {
   const handleClick = useCallback(() => {
     if (isMyTurn && canToggle) {
       onToggleKeep();
     }
   }, [isMyTurn, canToggle, onToggleKeep]);
 
+  const currentTheme = diceThemes.find(t => t.id === (diceThemeId ?? 'classic'));
+  const imagePath = currentTheme?.imagePath;
   const dots = DOT_POSITIONS[value] ?? [];
   const interactive = isMyTurn && canToggle;
 
   const classNames = [
     styles.die,
+    imagePath ? styles.dieImageMode : '',
     kept ? styles.dieKept : '',
     rolling && !kept ? styles.dieRolling : '',
     interactive ? styles.dieInteractive : '',
@@ -59,21 +64,30 @@ export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht,
       disabled={!interactive || isGhost}
       aria-label={`ダイス ${value}${kept ? ' (キープ中)' : ''}`}
     >
-      <div className={styles.dieGrid}>
-        {[0, 1, 2].map((row) =>
-          [0, 1, 2].map((col) => {
-            const hasDot = dots.some(([r, c]) => r === row && c === col);
-            return (
-              <div
-                key={`${row}-${col}`}
-                className={`${styles.dotCell} ${hasDot ? styles.dotVisible : ''}`}
-              >
-                {hasDot && <div className={styles.dot} />}
-              </div>
-            );
-          }),
-        )}
-      </div>
+      {imagePath ? (
+        <img
+          src={`${imagePath}/${value}.png`}
+          alt={`ダイス${value}`}
+          className={styles.dieImage}
+          draggable={false}
+        />
+      ) : (
+        <div className={styles.dieGrid}>
+          {[0, 1, 2].map((row) =>
+            [0, 1, 2].map((col) => {
+              const hasDot = dots.some(([r, c]) => r === row && c === col);
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`${styles.dotCell} ${hasDot ? styles.dotVisible : ''}`}
+                >
+                  {hasDot && <div className={styles.dot} />}
+                </div>
+              );
+            }),
+          )}
+        </div>
+      )}
     </button>
   );
 }

@@ -62,15 +62,23 @@ export function ThemePanel({ onClose }: ThemePanelProps) {
               onClick={() => theme.setDice(dice.id)}
               title={dice.name}
             >
-              <span
-                className={styles.dicePreview}
-                style={{ background: dice.vars['--die-bg'] }}
-              >
-                <span
-                  className={styles.diceDot}
-                  style={{ background: dice.vars['--dot-bg'] }}
+              {dice.imagePath ? (
+                <img
+                  src={`${dice.imagePath}/1.png`}
+                  alt={dice.name}
+                  className={styles.dicePreviewImage}
                 />
-              </span>
+              ) : (
+                <span
+                  className={styles.dicePreview}
+                  style={{ background: dice.vars['--die-bg'] }}
+                >
+                  <span
+                    className={styles.diceDot}
+                    style={{ background: dice.vars['--dot-bg'] }}
+                  />
+                </span>
+              )}
               <span className={styles.optionName}>{dice.name}</span>
             </button>
           ))}

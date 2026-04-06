@@ -7,6 +7,16 @@ const DEFAULT_SELECTION: ThemeSelection = { backgroundId: 'mahogany', diceId: 'c
 class ThemeManager {
   private _selection: ThemeSelection = { ...DEFAULT_SELECTION };
   private initialized = false;
+  private listeners = new Set<() => void>();
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => { this.listeners.delete(listener); };
+  }
+
+  private notify(): void {
+    this.listeners.forEach(l => l());
+  }
 
   get selection(): ThemeSelection { return { ...this._selection }; }
 
@@ -31,6 +41,7 @@ class ThemeManager {
     this._selection.backgroundId = id;
     this.applyTheme();
     this.save();
+    this.notify();
   }
 
   setDice(id: string): void {
@@ -38,6 +49,7 @@ class ThemeManager {
     this._selection.diceId = id;
     this.applyTheme();
     this.save();
+    this.notify();
   }
 
   setAccent(id: string): void {
@@ -45,6 +57,7 @@ class ThemeManager {
     this._selection.accentId = id;
     this.applyTheme();
     this.save();
+    this.notify();
   }
 
   private applyTheme(): void {

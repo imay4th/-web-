@@ -58,10 +58,12 @@
 - [x] ダイスキープ時ゴースト表示（レイアウトシフト防止）
 - [x] 新規キープダイスの黄色枠強調
 - [x] スコアカテゴリ選択のフィードバック強化（パルス+長時間フラッシュ）
-- [x] テーマ選択機能（背景4種×ダイス4種×アクセント4種、localStorage永続化）
+- [x] テーマ選択機能（背景4種×ダイス4種+画像ダイス×アクセント4種、localStorage永続化）
+- [x] 画像ダイステーマ基盤（`DiceTheme.imagePath` フィールド、将来の追加は2ステップで完結）
+- [x] エヴァ初号機ダイス（イラスト調、紫/オレンジ）
 - [x] 音量調節機能改善（BGM auto-unmute、SEプレビュー音300msデバウンス、%ラベル表示）
 - [x] BGM音量iOS対応（GainNode経由制御、HTMLAudioElement.volume非依存）
-- [x] ルームID入力スマホIME対応（compositionガード完全削除、正規表現フィルタのみ）
+- [x] ルームID入力iOS対応（autoCapitalize="off"+autoCorrect="off"+spellCheck=false、CSS text-transform削除で三重変換解消）
 - [x] スコア確定ポップアップ（ScoreAnnounce: 役名・点数・プレイヤー名を2.5秒表示）
 
 ### 4.4 NPC対戦

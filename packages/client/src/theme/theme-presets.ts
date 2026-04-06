@@ -96,6 +96,30 @@ export const diceThemes: DiceTheme[] = [
       '--dot-shadow': '0 0 6px rgba(0,229,255,0.6), inset 0 1px 2px rgba(0,0,0,0.2)',
     },
   },
+  {
+    id: 'eva01',
+    name: 'エヴァ初号機',
+    vars: {},
+    imagePath: '/dice/eva01',
+  },
+  {
+    id: 'eva00_blue',
+    name: 'エヴァ零号機（旧劇）',
+    vars: {},
+    imagePath: '/dice/eva00_blue',
+  },
+  {
+    id: 'eva00_yellow',
+    name: 'エヴァ零号機（新劇）',
+    vars: {},
+    imagePath: '/dice/eva00_yellow',
+  },
+  {
+    id: 'eva02',
+    name: 'エヴァ弐号機',
+    vars: {},
+    imagePath: '/dice/eva02',
+  },
 ];
 
 export const accentThemes: AccentTheme[] = [

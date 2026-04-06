@@ -5,6 +5,7 @@ import { Die } from './Die';
 import { YachtCelebration } from '../YachtCelebration/YachtCelebration';
 import { HandAnnounce } from '../HandAnnounce/HandAnnounce';
 import { useAudio } from '../../audio/useAudio';
+import { useTheme } from '../../theme/useTheme';
 import styles from './DiceArea.module.css';
 
 interface DiceAreaProps {
@@ -35,6 +36,7 @@ export function DiceArea({
   scoreCard,
 }: DiceAreaProps) {
   const audio = useAudio();
+  const { selection } = useTheme();
   const audioRef = useRef(audio);
   audioRef.current = audio;
   const [rolling, setRolling] = useState(false);
@@ -234,6 +236,7 @@ export function DiceArea({
                   index={entry.originalIndex}
                   value={entry.die.value}
                   kept={true}
+                  diceThemeId={selection.diceId}
                   isMyTurn={isMyTurn}
                   canToggle={canToggle}
                   rolling={rolling}
@@ -279,6 +282,7 @@ export function DiceArea({
                     displayIndex={idx}
                     value={die.value}
                     kept={false}
+                    diceThemeId={selection.diceId}
                     isMyTurn={isMyTurn}
                     canToggle={canToggle}
                     rolling={rolling}
@@ -295,6 +299,7 @@ export function DiceArea({
                     displayIndex={0}
                     value={die.value}
                     kept={false}
+                    diceThemeId={selection.diceId}
                     isMyTurn={false}
                     canToggle={false}
                     rolling={false}
