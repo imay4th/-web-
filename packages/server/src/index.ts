@@ -4,10 +4,12 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync, readFileSync } from 'node:fs';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
 } from '@yacht/shared';
+import { deserializeTable } from '@yacht/shared';
 import { setupSocketHandlers } from './socket/handler.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +23,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     methods: ['GET', 'POST'],
   },
+  pingTimeout: 60000,  // 60秒（デフォルト20秒から延長）
 });
 
 const PORT = process.env.PORT || 3000;
@@ -46,8 +49,21 @@ app.get('*', (req, res, next) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
+// 最適戦略テーブルの読み込み（存在する場合のみ）
+const tablePath = path.resolve(__dirname, '../../shared/data/optimal-table.bin');
+let optimalTable: Float64Array | undefined;
+if (existsSync(tablePath)) {
+  try {
+    const buf = readFileSync(tablePath);
+    optimalTable = deserializeTable(new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength));
+    console.log(`最適戦略テーブル読み込み完了 (${(buf.length / 1024).toFixed(0)} KB)`);
+  } catch (e) {
+    console.warn('最適戦略テーブルの読み込みに失敗:', e);
+  }
+}
+
 // Socket.ioハンドラ設定
-setupSocketHandlers(io);
+setupSocketHandlers(io, optimalTable);
 
 httpServer.listen(PORT, () => {
   console.log(`サーバー起動: ポート ${PORT}`);

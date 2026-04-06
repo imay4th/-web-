@@ -4,3 +4,6 @@ dist/
 .env
 .env.local
 *.log
+
+# 生成されるDPテーブル（再生成可能）
+packages/shared/data/

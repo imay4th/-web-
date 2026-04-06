@@ -7,9 +7,9 @@ export class NpcController {
   private strategy: NpcStrategy;
   private difficulty: NpcDifficulty;
 
-  constructor(difficulty: NpcDifficulty) {
+  constructor(difficulty: NpcDifficulty, optimalTable?: Float64Array) {
     this.difficulty = difficulty;
-    this.strategy = createNpcStrategy(difficulty);
+    this.strategy = createNpcStrategy(difficulty, optimalTable);
   }
 
   getDifficulty(): NpcDifficulty {

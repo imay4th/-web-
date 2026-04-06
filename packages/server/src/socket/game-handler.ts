@@ -80,6 +80,7 @@ export function registerGameHandlers(
   roomManager: RoomManager,
   engines: Map<string, GameEngine>,
   npcControllers: Map<string, NpcInfo>,
+  optimalTable?: Float64Array,
 ): void {
   // ゲーム開始
   socket.on('game:start', () => {
@@ -339,7 +340,7 @@ export function registerGameHandlers(
       room.gameState = engine.getState();
 
       // NpcController生成
-      const controller = new NpcController(difficulty);
+      const controller = new NpcController(difficulty, optimalTable);
       npcControllers.set(room.id, {
         controller,
         npcId,
@@ -390,7 +391,7 @@ export function registerGameHandlers(
       room.gameState = engine.getState();
 
       // 同じ難易度でNpcControllerを再生成
-      const newController = new NpcController(npcInfo.difficulty);
+      const newController = new NpcController(npcInfo.difficulty, optimalTable);
       npcControllers.set(room.id, {
         controller: newController,
         npcId: npcInfo.npcId,
@@ -412,6 +413,38 @@ export function registerGameHandlers(
         typeof error === 'string'
           ? error
           : 'NPC対戦の再開に失敗しました。';
+      socket.emit('room:error', { message });
+    }
+  });
+
+  // NPC対戦再開（画面復帰時）
+  socket.on('game:resume-npc', () => {
+    try {
+      const room = roomManager.getRoomBySocketId(socket.id);
+      if (!room) {
+        socket.emit('room:error', { message: 'ルームに参加していません。' });
+        return;
+      }
+
+      const engine = engines.get(room.id);
+      if (!engine) {
+        socket.emit('room:error', { message: 'ゲームが開始されていません。' });
+        return;
+      }
+
+      const npcInfo = npcControllers.get(room.id);
+      if (!npcInfo) {
+        socket.emit('room:error', { message: 'NPC対戦ではありません。' });
+        return;
+      }
+
+      // 現在の状態を送信
+      io.to(room.id).emit('game:state-update', { gameState: engine.getState() });
+
+      // NPCのターンなら実行
+      triggerNpcTurnIfNeeded(io, engine, room.id, npcInfo);
+    } catch (error) {
+      const message = typeof error === 'string' ? error : 'NPC再開に失敗しました。';
       socket.emit('room:error', { message });
     }
   });

@@ -1,5 +1,6 @@
 import { calculatePossibleScores } from '../scoring/calculator.js';
-import { getAllKeepMasks } from './probability.js';
+import { getAllKeepMasks, getRollDistribution } from './probability.js';
+import { lookupValue, OPTIMAL_CATEGORIES } from './optimal-solver.js';
 import {
   getAvailableCategories,
   getBestAdjustedScore,
@@ -19,6 +20,7 @@ export interface NpcStrategy {
 
 export function createNpcStrategy(
   difficulty: 'easy' | 'normal' | 'hard' | 'expert',
+  optimalTable?: Float64Array,
 ): NpcStrategy {
   switch (difficulty) {
     case 'easy':
@@ -28,7 +30,7 @@ export function createNpcStrategy(
     case 'hard':
       return new HardStrategy();
     case 'expert':
-      return new ExpertStrategy();
+      return new ExpertStrategy(optimalTable);
   }
 }
 
@@ -254,18 +256,178 @@ class HardStrategy implements NpcStrategy {
 // ===== ExpertStrategy =====
 
 class ExpertStrategy implements NpcStrategy {
+  private table: Float64Array | null;
+
+  constructor(table?: Float64Array) {
+    this.table = table ?? null;
+  }
+
   decide(dice: number[], rollCount: number, scoreCard: ScoreCard): NpcDecision {
+    if (this.table) {
+      return this.decideOptimal(dice, rollCount, scoreCard);
+    }
+    return this.decideHeuristic(dice, rollCount, scoreCard);
+  }
+
+  // === テーブル参照型（最適戦略） ===
+
+  private decideOptimal(dice: number[], rollCount: number, scoreCard: ScoreCard): NpcDecision {
     const available = getAvailableCategories(scoreCard);
     if (available.length === 0) {
       return { type: 'score', category: 'choice' };
     }
 
-    // 3回ロール済み: 機会コスト考慮で最善カテゴリ選択
+    const state = this.computeState(scoreCard);
+
+    if (rollCount >= 3) {
+      return { type: 'score', category: this.pickBestCategoryOptimal(dice, state) };
+    }
+
+    const remainingRolls = 3 - rollCount;
+    const keepMasks = getAllKeepMasks();
+    const cache = new Map<string, number>();
+
+    let bestMask: boolean[] | null = null;
+    let bestValue = -Infinity;
+
+    for (const mask of keepMasks) {
+      const keptDice: number[] = [];
+      for (let i = 0; i < 5; i++) {
+        if (mask[i]) keptDice.push(dice[i]);
+      }
+      const value = this.computeTableExpected(keptDice, remainingRolls, state, cache);
+      if (value > bestValue) {
+        bestValue = value;
+        bestMask = mask;
+      }
+    }
+
+    const immediateValue = this.bestCategoryValueOptimal(dice, state);
+    if (immediateValue >= bestValue) {
+      return { type: 'score', category: this.pickBestCategoryOptimal(dice, state) };
+    }
+
+    if (bestMask !== null && bestMask.every(Boolean)) {
+      return { type: 'score', category: this.pickBestCategoryOptimal(dice, state) };
+    }
+
+    return { type: 'keep', keepMask: bestMask ?? [false, false, false, false, false] };
+  }
+
+  private computeState(scoreCard: ScoreCard): { bitmask: number; upperSub: number } {
+    let bitmask = 0;
+    let upperSub = 0;
+    for (let c = 0; c < OPTIMAL_CATEGORIES.length; c++) {
+      const cat = OPTIMAL_CATEGORIES[c];
+      if (scoreCard[cat] !== null) {
+        bitmask |= (1 << c);
+        if (c < 6) upperSub += scoreCard[cat]!;
+      }
+    }
+    return { bitmask, upperSub: Math.min(upperSub, 63) };
+  }
+
+  private bestCategoryValueOptimal(
+    dice: number[], state: { bitmask: number; upperSub: number },
+  ): number {
+    const scores = calculatePossibleScores(dice);
+    let best = -Infinity;
+    for (let c = 0; c < OPTIMAL_CATEGORIES.length; c++) {
+      if (state.bitmask & (1 << c)) continue;
+      const cat = OPTIMAL_CATEGORIES[c];
+      const score = scores[cat];
+      const newMask = state.bitmask | (1 << c);
+      const newUpper = c < 6 ? Math.min(state.upperSub + score, 63) : state.upperSub;
+      const val = score + lookupValue(this.table!, newMask, newUpper);
+      if (val > best) best = val;
+    }
+    return best;
+  }
+
+  private pickBestCategoryOptimal(
+    dice: number[], state: { bitmask: number; upperSub: number },
+  ): Category {
+    const scores = calculatePossibleScores(dice);
+    let bestCat: Category = OPTIMAL_CATEGORIES[0];
+    let bestVal = -Infinity;
+    for (let c = 0; c < OPTIMAL_CATEGORIES.length; c++) {
+      if (state.bitmask & (1 << c)) continue;
+      const cat = OPTIMAL_CATEGORIES[c];
+      const score = scores[cat];
+      const newMask = state.bitmask | (1 << c);
+      const newUpper = c < 6 ? Math.min(state.upperSub + score, 63) : state.upperSub;
+      const val = score + lookupValue(this.table!, newMask, newUpper);
+      if (val > bestVal) {
+        bestVal = val;
+        bestCat = cat;
+      }
+    }
+    return bestCat;
+  }
+
+  private computeTableExpected(
+    keptDice: number[],
+    remainingRolls: number,
+    state: { bitmask: number; upperSub: number },
+    cache: Map<string, number>,
+  ): number {
+    const sortedKept = [...keptDice].sort((a, b) => a - b);
+    const cacheKey = `${sortedKept.join(',')}_${remainingRolls}`;
+    const cached = cache.get(cacheKey);
+    if (cached !== undefined) return cached;
+
+    if (remainingRolls === 0 || keptDice.length === 5) {
+      const result = this.bestCategoryValueOptimal(
+        keptDice.length === 5 ? keptDice : sortedKept, state,
+      );
+      cache.set(cacheKey, result);
+      return result;
+    }
+
+    const numReroll = 5 - keptDice.length;
+    const distribution = getRollDistribution(numReroll);
+    const totalOutcomes = Math.pow(6, numReroll);
+    let expectedValue = 0;
+
+    for (const [pattern, count] of distribution) {
+      const newDice = pattern.length > 0
+        ? [...keptDice, ...pattern.split(',').map(Number)]
+        : [...keptDice];
+      const probability = count / totalOutcomes;
+
+      if (remainingRolls === 1) {
+        expectedValue += probability * this.bestCategoryValueOptimal(newDice, state);
+      } else {
+        const masks = getAllKeepMasks();
+        let bestKeepValue = -Infinity;
+        for (const mask of masks) {
+          const nextKept: number[] = [];
+          for (let i = 0; i < 5; i++) {
+            if (mask[i]) nextKept.push(newDice[i]);
+          }
+          const value = this.computeTableExpected(nextKept, remainingRolls - 1, state, cache);
+          if (value > bestKeepValue) bestKeepValue = value;
+        }
+        expectedValue += probability * bestKeepValue;
+      }
+    }
+
+    cache.set(cacheKey, expectedValue);
+    return expectedValue;
+  }
+
+  // === ヒューリスティック型（フォールバック） ===
+
+  private decideHeuristic(dice: number[], rollCount: number, scoreCard: ScoreCard): NpcDecision {
+    const available = getAvailableCategories(scoreCard);
+    if (available.length === 0) {
+      return { type: 'score', category: 'choice' };
+    }
+
     if (rollCount >= 3) {
       return { type: 'score', category: this.pickBestWithOpportunityCost(dice, scoreCard, available) };
     }
 
-    // 残り全ロールの期待値を再帰的に計算
     const remainingRolls = 3 - rollCount;
     const cache = new Map<string, number>();
     const keepMasks = getAllKeepMasks();
@@ -276,11 +438,8 @@ class ExpertStrategy implements NpcStrategy {
     for (const mask of keepMasks) {
       const keptDice: number[] = [];
       for (let i = 0; i < 5; i++) {
-        if (mask[i]) {
-          keptDice.push(dice[i]);
-        }
+        if (mask[i]) keptDice.push(dice[i]);
       }
-
       const value = computeExpectedValue(keptDice, remainingRolls, scoreCard, cache);
       if (value > bestValue) {
         bestValue = value;
@@ -288,18 +447,13 @@ class ExpertStrategy implements NpcStrategy {
       }
     }
 
-    // 即座にスコアした方が良い場合
     const currentBest = getBestAdjustedScore(dice, scoreCard);
     if (currentBest.adjustedScore >= bestValue) {
       return { type: 'score', category: this.pickBestWithOpportunityCost(dice, scoreCard, available) };
     }
 
-    // 全キープが最善 → スコアリング
     if (bestMask !== null && bestMask.every(Boolean)) {
-      return {
-        type: 'score',
-        category: this.pickBestWithOpportunityCost(dice, scoreCard, available),
-      };
+      return { type: 'score', category: this.pickBestWithOpportunityCost(dice, scoreCard, available) };
     }
 
     return { type: 'keep', keepMask: bestMask ?? [false, false, false, false, false] };
@@ -312,12 +466,10 @@ class ExpertStrategy implements NpcStrategy {
   ): Category {
     const scores = calculatePossibleScores(dice);
 
-    // ヨットが出たらyachtに記入（未記入なら）
     if (scores.yacht === 50 && available.includes('yacht')) {
       return 'yacht';
     }
 
-    // 各カテゴリの機会コスト推定
     let bestCategory = available[0];
     let bestNetValue = -Infinity;
 
@@ -325,8 +477,6 @@ class ExpertStrategy implements NpcStrategy {
       const score = scores[cat];
       const opportunityCost = this.estimateOpportunityCost(cat, score, available, scoreCard);
       const netValue = score - opportunityCost;
-
-      // 上段ボーナス調整
       const bonusAdj = this.computeUpperBonusValue(cat, score, scoreCard);
       const adjustedNet = netValue + bonusAdj;
 
@@ -343,28 +493,23 @@ class ExpertStrategy implements NpcStrategy {
     category: Category,
     score: number,
     available: Category[],
-    scoreCard: ScoreCard,
+    _scoreCard: ScoreCard,
   ): number {
-    // 高価値カテゴリの保険的価値を推定
     const categoryValues: Record<Category, number> = {
       ones: 3, twos: 6, threes: 9, fours: 12, fives: 15, sixes: 18,
       fullHouse: 15, fourOfAKind: 16, littleStraight: 15, bigStraight: 30,
       choice: 20, yacht: 50,
     };
 
-    // 平均期待値（そのカテゴリを将来使う場合の期待値）
     const expectedFutureValue = categoryValues[category] * 0.5;
 
-    // choiceは保険として価値が高い
     if (category === 'choice') {
       const remainingCategories = available.length;
-      // 残りカテゴリが多いほど保険価値が高い
       return Math.min(score * 0.3, remainingCategories * 1.5);
     }
 
-    // スコアが0点のカテゴリは機会コストが低い
     if (score === 0) {
-      return -expectedFutureValue * 0.5; // マイナスの機会コスト = 0点記入のインセンティブ
+      return -expectedFutureValue * 0.5;
     }
 
     return 0;
@@ -387,20 +532,17 @@ class ExpertStrategy implements NpcStrategy {
     const par = parValues[category];
     const diff = score - par;
 
-    // パー超過はボーナス獲得に寄与
     const remainingUpperSlots = upperCategories.filter(
       (c) => c !== category && scoreCard[c] === null,
     ).length;
 
     if (remainingUpperSlots === 0) {
-      // 最後の上段: 直接ボーナス判定
       const currentSubtotal = Object.entries(scoreCard)
         .filter(([key]) => upperCategories.includes(key as Category))
         .reduce((sum, [, val]) => sum + (val ?? 0), 0);
       return (currentSubtotal + score >= 63) ? 35 : 0;
     }
 
-    // ボーナスへの寄与度合い
     return diff * (35 / 63);
   }
 }

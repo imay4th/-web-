@@ -66,5 +66,15 @@ export {
   getBestAdjustedScore,
   getAvailableCategories,
   createNpcStrategy,
+  solveOptimalTable,
+  serializeTable,
+  deserializeTable,
+  lookupValue,
+  OPTIMAL_CATEGORIES,
+  OPTIMAL_UPPER_SUB_SIZE,
+  initOptimalTable,
+  getOptimalTable,
+  isOptimalTableLoaded,
 } from './ai/index.js';
 export type { NpcDecision, NpcStrategy } from './ai/index.js';
+export type { SolverProgress } from './ai/index.js';
