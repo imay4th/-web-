@@ -16,6 +16,7 @@ export interface ServerToClientEvents {
   'game:scored': (payload: GameScoredPayload) => void;
   'game:turn-changed': (payload: GameTurnChangedPayload) => void;
   'game:finished': (payload: GameFinishedPayload) => void;
+  'game:session-expired': () => void;
 
   'player:disconnected': (payload: PlayerDisconnectedPayload) => void;
   'player:reconnected': (payload: PlayerReconnectedPayload) => void;
@@ -45,6 +46,11 @@ export interface ClientToServerEvents {
     callback: (response: GameStartedPayload | RoomErrorPayload) => void,
   ) => void;
   'game:restart-npc': () => void;
+  'game:rejoin': (
+    payload: GameRejoinPayload,
+    callback: (response: GameRejoinedPayload | RoomErrorPayload) => void,
+  ) => void;
+  'game:resume-npc': () => void;
 }
 
 // ----- Payload 型定義 -----
@@ -139,4 +145,14 @@ export interface GameRollPayload {
 export interface StartNpcPayload {
   nickname: string;
   difficulty: NpcDifficulty;
+}
+
+export interface GameRejoinPayload {
+  nickname: string;
+  roomId: string;
+}
+
+export interface GameRejoinedPayload {
+  gameState: GameState;
+  playerId: string;
 }

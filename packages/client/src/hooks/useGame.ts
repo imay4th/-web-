@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type {
   Room,
   GameState,
@@ -34,6 +34,7 @@ export interface UseGameReturn {
   isConnected: boolean;
   isMyTurn: boolean;
   npcDifficulty: NpcDifficulty | null;
+  showResumeOverlay: boolean;
 
   setNickname: (name: string) => void;
   createRoom: () => void;
@@ -49,6 +50,7 @@ export interface UseGameReturn {
   startNpcGame: (difficulty: NpcDifficulty) => void;
   restartNpcGame: () => void;
   backToNpcSelect: () => void;
+  resumeNpcGame: () => void;
 }
 
 export function useGame(): UseGameReturn {
@@ -62,6 +64,14 @@ export function useGame(): UseGameReturn {
   const [rankings, setRankings] = useState<RankingEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [npcDifficulty, setNpcDifficulty] = useState<NpcDifficulty | null>(null);
+  const [showResumeOverlay, setShowResumeOverlay] = useState(false);
+
+  // クロージャ問題を回避するための ref
+  const npcDifficultyRef = useRef<NpcDifficulty | null>(null);
+  npcDifficultyRef.current = npcDifficulty;
+
+  // gameState から roomId を取得して保持
+  const roomIdRef = useRef<string | null>(null);
 
   const isMyTurn = useMemo(() => {
     if (!gameState || !playerId) return false;
@@ -208,6 +218,18 @@ export function useGame(): UseGameReturn {
       });
     };
 
+    const onSessionExpired = () => {
+      if (npcDifficultyRef.current) {
+        setScreen('npcSelect');
+      } else {
+        setScreen('lobby');
+      }
+      setGameState(null);
+      setRankings(null);
+      setRoom(null);
+      setError('ゲームセッションの有効期限が切れました。');
+    };
+
     socket.on('room:player-joined', onPlayerJoined);
     socket.on('room:player-left', onPlayerLeft);
     socket.on('room:error', onRoomError);
@@ -219,6 +241,7 @@ export function useGame(): UseGameReturn {
     socket.on('game:finished', onGameFinished);
     socket.on('player:disconnected', onPlayerDisconnected);
     socket.on('player:reconnected', onPlayerReconnected);
+    socket.on('game:session-expired', onSessionExpired);
 
     return () => {
       socket.off('room:player-joined', onPlayerJoined);
@@ -232,8 +255,55 @@ export function useGame(): UseGameReturn {
       socket.off('game:finished', onGameFinished);
       socket.off('player:disconnected', onPlayerDisconnected);
       socket.off('player:reconnected', onPlayerReconnected);
+      socket.off('game:session-expired', onSessionExpired);
     };
   }, []);
+
+  // gameState が更新されるたびに roomId を保持
+  useEffect(() => {
+    if (gameState?.roomId) {
+      roomIdRef.current = gameState.roomId;
+    }
+  }, [gameState]);
+
+  // 画面復帰時の再接続処理
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) return;
+      if (screen !== 'game') return;
+      if (socket.connected) return;
+
+      const roomId = roomIdRef.current;
+      if (!roomId || !nickname) return;
+
+      socket.connect();
+      socket.once('connect', () => {
+        socket.emit('game:rejoin', { nickname, roomId }, (response: { gameState: GameState; playerId: string } | { message: string }) => {
+          if ('message' in response) {
+            // セッション切れ: ロビーに戻す
+            if (npcDifficultyRef.current) {
+              setScreen('npcSelect');
+            } else {
+              setScreen('lobby');
+            }
+            setGameState(null);
+            setRankings(null);
+            setError(response.message);
+            return;
+          }
+          // 再接続成功
+          setGameState(response.gameState);
+          setPlayerId(response.playerId);
+          if (npcDifficultyRef.current) {
+            setShowResumeOverlay(true);
+          }
+        });
+      });
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [screen, nickname]);
 
   // --- アクション ---
   const setNickname = useCallback((name: string) => {
@@ -352,6 +422,11 @@ export function useGame(): UseGameReturn {
     setScreen('npcSelect');
   }, []);
 
+  const resumeNpcGame = useCallback(() => {
+    socket.emit('game:resume-npc');
+    setShowResumeOverlay(false);
+  }, []);
+
   return {
     screen,
     nickname,
@@ -362,6 +437,8 @@ export function useGame(): UseGameReturn {
     error,
     isConnected,
     isMyTurn,
+    npcDifficulty,
+    showResumeOverlay,
     setNickname,
     createRoom,
     joinRoom,
@@ -372,10 +449,10 @@ export function useGame(): UseGameReturn {
     scoreCategory,
     playAgain,
     backToLobby,
-    npcDifficulty,
     showNpcSelect,
     startNpcGame,
     restartNpcGame,
     backToNpcSelect,
+    resumeNpcGame,
   };
 }

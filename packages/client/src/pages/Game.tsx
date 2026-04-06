@@ -21,6 +21,8 @@ interface GameProps {
   isNpcGame?: boolean;
   onRestartNpc?: () => void;
   onBackToNpcSelect?: () => void;
+  showResumeOverlay?: boolean;
+  onResumeNpc?: () => void;
 }
 
 export function Game({
@@ -36,6 +38,8 @@ export function Game({
   isNpcGame,
   onRestartNpc,
   onBackToNpcSelect,
+  showResumeOverlay,
+  onResumeNpc,
 }: GameProps) {
   const [testMode, setTestMode] = useState(false);
   const [testDiceValues, setTestDiceValues] = useState([1, 1, 1, 1, 1]);
@@ -108,6 +112,22 @@ export function Game({
           onRestartNpc={onRestartNpc}
           onBackToNpcSelect={onBackToNpcSelect}
         />
+      )}
+
+      {showResumeOverlay && (
+        <div className={styles.resumeOverlay}>
+          <div className={styles.resumeCard}>
+            <p className={styles.resumeTitle}>ゲームが一時停止しています</p>
+            <p className={styles.resumeMessage}>画面がスリープしたため、ゲームを一時停止しました。</p>
+            <button
+              type="button"
+              className={styles.resumeBtn}
+              onClick={onResumeNpc}
+            >
+              再開する
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

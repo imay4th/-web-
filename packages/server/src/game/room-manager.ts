@@ -127,6 +127,47 @@ export class RoomManager {
     return room;
   }
 
+  rejoinRoom(
+    newSocketId: string,
+    nickname: string,
+    roomId: string,
+  ): { room: Room; oldSocketId: string } | null {
+    const room = this.rooms.get(roomId);
+    if (!room) return null;
+
+    // 同名かつ切断中のプレイヤーを検索
+    const player = room.players.find(
+      (p) => p.nickname === nickname && !p.isConnected && !p.isNPC,
+    );
+    if (!player) return null;
+
+    const oldSocketId = player.id;
+
+    // プレイヤーIDを新しいsocketIdに更新
+    player.id = newSocketId;
+    player.isConnected = true;
+
+    // playerRoomMapを更新
+    this.playerRoomMap.delete(oldSocketId);
+    this.playerRoomMap.set(newSocketId, roomId);
+
+    // ホストIDも更新
+    if (room.hostId === oldSocketId) {
+      room.hostId = newSocketId;
+    }
+
+    // gameState内のプレイヤーIDも更新
+    if (room.gameState) {
+      const gamePlayer = room.gameState.players.find((p) => p.id === oldSocketId);
+      if (gamePlayer) {
+        gamePlayer.id = newSocketId;
+        gamePlayer.isConnected = true;
+      }
+    }
+
+    return { room, oldSocketId };
+  }
+
   removeEmptyRooms(): void {
     for (const [roomId, room] of this.rooms) {
       if (room.players.length === 0) {

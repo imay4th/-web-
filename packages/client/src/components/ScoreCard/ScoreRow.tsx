@@ -52,7 +52,7 @@ export function ScoreRow({
       const timer = setTimeout(() => {
         setJustScoredPlayers(new Set());
         setRowJustScored(false);
-      }, 600);
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, [allPlayerScores]);

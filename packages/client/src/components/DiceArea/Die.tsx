@@ -9,6 +9,9 @@ interface DieProps {
   rolling: boolean;
   index: number;
   isYacht?: boolean;
+  displayIndex?: number;   // ロールエリア内の表示順（アニメーション遅延用）
+  isGhost?: boolean;       // ゴースト表示
+  isNewlyKept?: boolean;   // 新規キープ強調
   onToggleKeep: () => void;
 }
 
@@ -22,7 +25,7 @@ const DOT_POSITIONS: Record<number, number[][]> = {
   6: [[0, 0], [1, 0], [2, 0], [0, 2], [1, 2], [2, 2]],
 };
 
-export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht, onToggleKeep }: DieProps) {
+export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht, displayIndex, isGhost, isNewlyKept, onToggleKeep }: DieProps) {
   const handleClick = useCallback(() => {
     if (isMyTurn && canToggle) {
       onToggleKeep();
@@ -38,11 +41,14 @@ export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht,
     rolling && !kept ? styles.dieRolling : '',
     interactive ? styles.dieInteractive : '',
     isYacht ? styles.dieYacht : '',
+    isGhost ? styles.dieGhost : '',
+    isNewlyKept ? styles.dieNewlyKept : '',
   ]
     .filter(Boolean)
     .join(' ');
 
-  const animStyle = rolling && !kept ? { animationDelay: `${index * 60}ms` } : undefined;
+  const animDelay = displayIndex ?? index;
+  const animStyle = rolling && !kept ? { animationDelay: `${animDelay * 60}ms` } : undefined;
 
   return (
     <button
@@ -50,7 +56,7 @@ export function Die({ value, kept, isMyTurn, canToggle, rolling, index, isYacht,
       className={classNames}
       style={animStyle}
       onClick={handleClick}
-      disabled={!interactive}
+      disabled={!interactive || isGhost}
       aria-label={`ダイス ${value}${kept ? ' (キープ中)' : ''}`}
     >
       <div className={styles.dieGrid}>

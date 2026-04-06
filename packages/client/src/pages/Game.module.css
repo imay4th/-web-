@@ -86,3 +86,57 @@
     gap: var(--space-md);
   }
 }
+
+/* 再開オーバーレイ */
+.resumeOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.resumeCard {
+  background: var(--card-bg, #2a1f16);
+  border: 1px solid var(--border-color, rgba(197, 164, 78, 0.3));
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.resumeTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-light, #dbc06a);
+  margin: 0 0 12px 0;
+}
+
+.resumeMessage {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #b0a090);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.resumeBtn {
+  display: inline-block;
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent, #c5a44e);
+  color: var(--btn-primary-text, #1a1410);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.resumeBtn:hover {
+  background: var(--accent-dark, #a8892e);
+}

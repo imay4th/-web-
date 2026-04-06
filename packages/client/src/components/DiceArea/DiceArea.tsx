@@ -40,6 +40,8 @@ export function DiceArea({
   const [rolling, setRolling] = useState(false);
   const [rollAnimKey, setRollAnimKey] = useState(0);
   const [justRolled, setJustRolled] = useState(false);
+  const [ghostIndices, setGhostIndices] = useState<Set<number>>(new Set());
+  const [newlyKeptIndices, setNewlyKeptIndices] = useState<Set<number>>(new Set());
   const prevRollCountRef = useRef(rollCount);
   const latestDiceRef = useRef(dice);
   latestDiceRef.current = dice;
@@ -58,10 +60,16 @@ export function DiceArea({
 
   // ロールアニメーション + アニメーション完了時にヨット判定
   useEffect(() => {
+    // ターン変更時（rollCount→0）: 両方クリア
+    if (rollCount === 0 && prevRollCountRef.current !== 0) {
+      setNewlyKeptIndices(new Set());
+      setGhostIndices(new Set());
+    }
     if (rollCount > 0 && rollCount !== prevRollCountRef.current) {
       setRolling(true);
       setRollAnimKey(k => k + 1);
       setJustRolled(false);
+      setGhostIndices(new Set());
       audioRef.current.play('diceRoll');
       const timer = setTimeout(() => {
         setRolling(false);
@@ -184,8 +192,25 @@ export function DiceArea({
   const handleToggleKeep = useCallback((dieIndex: number) => {
     setJustRolled(false);
     audioRef.current.play('diceKeep');
+    // keep方向: ゴースト追加 + 新規キープ追加
+    if (!dice[dieIndex].kept) {
+      setGhostIndices(prev => new Set(prev).add(dieIndex));
+      setNewlyKeptIndices(prev => new Set(prev).add(dieIndex));
+    } else {
+      // unkeep方向: ゴースト削除 + 新規キープ削除
+      setGhostIndices(prev => {
+        const next = new Set(prev);
+        next.delete(dieIndex);
+        return next;
+      });
+      setNewlyKeptIndices(prev => {
+        const next = new Set(prev);
+        next.delete(dieIndex);
+        return next;
+      });
+    }
     onToggleKeep(dieIndex);
-  }, [onToggleKeep]);
+  }, [onToggleKeep, dice]);
 
   const containerClass = `${styles.container}${!isMyTurn ? ` ${styles.notMyTurn}` : ''}`;
 
@@ -213,6 +238,7 @@ export function DiceArea({
                   canToggle={canToggle}
                   rolling={rolling}
                   isYacht={isYacht}
+                  isNewlyKept={newlyKeptIndices.has(entry.originalIndex)}
                   onToggleKeep={() => handleToggleKeep(entry.originalIndex)}
                 />
               );
@@ -241,26 +267,51 @@ export function DiceArea({
           <div className={styles.preRollMessage}>ダイスを振ってください</div>
         ) : (
           (() => {
-            const rollDice = dice
-              .map((die, i) => ({ die, originalIndex: i }))
-              .filter(({ die }) => !die.kept)
-              .map(({ die, originalIndex }) => (
-                <Die
-                  key={`${originalIndex}-${rollAnimKey}`}
-                  index={originalIndex}
-                  value={die.value}
-                  kept={false}
-                  isMyTurn={isMyTurn}
-                  canToggle={canToggle}
-                  rolling={rolling}
-                  isYacht={isYacht}
-                  onToggleKeep={() => handleToggleKeep(originalIndex)}
-                />
-              ));
+            let displayIdx = 0;
+            const allSlots = dice.map((die, i) => {
+              if (!die.kept) {
+                // 通常のロールダイス
+                const idx = displayIdx++;
+                return (
+                  <Die
+                    key={`${i}-${rollAnimKey}`}
+                    index={i}
+                    displayIndex={idx}
+                    value={die.value}
+                    kept={false}
+                    isMyTurn={isMyTurn}
+                    canToggle={canToggle}
+                    rolling={rolling}
+                    isYacht={isYacht}
+                    onToggleKeep={() => handleToggleKeep(i)}
+                  />
+                );
+              } else if (ghostIndices.has(i)) {
+                // ゴーストダイス（キープ直後、次のロールまで残る）
+                return (
+                  <Die
+                    key={`ghost-${i}-${rollAnimKey}`}
+                    index={i}
+                    displayIndex={0}
+                    value={die.value}
+                    kept={false}
+                    isMyTurn={false}
+                    canToggle={false}
+                    rolling={false}
+                    isYacht={false}
+                    isGhost={true}
+                    onToggleKeep={() => {}}
+                  />
+                );
+              } else {
+                // 完全に非表示のスロット（レイアウト維持用）
+                return <div key={`hidden-${i}`} className={styles.ghostSlot} />;
+              }
+            });
             return (
               <>
-                <div className={styles.diceRow}>{rollDice.slice(0, 3)}</div>
-                <div className={styles.diceRow}>{rollDice.slice(3)}</div>
+                <div className={styles.diceRow}>{allSlots.slice(0, 3)}</div>
+                <div className={styles.diceRow}>{allSlots.slice(3, 5)}</div>
               </>
             );
           })()
