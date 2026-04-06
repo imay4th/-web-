@@ -12,6 +12,7 @@ const SE_FILES: Record<SoundName, string> = {
 
 class AudioManager {
   private bgm: HTMLAudioElement | null = null;
+  private bgmGainNode: GainNode | null = null;
   private bgmEndedHandler: (() => void) | null = null;
   private audioCtx: AudioContext | null = null;
   private seBufferCache = new Map<string, AudioBuffer>();
@@ -68,8 +69,12 @@ class AudioManager {
     if (this._muted && volume > 0) {
       this._muted = false;
     }
-    if (this.bgm) {
+    if (this.bgmGainNode) {
+      this.bgmGainNode.gain.value = this._bgmVolume;
+    } else if (this.bgm) {
       this.bgm.volume = this._bgmVolume;
+    }
+    if (this.bgm) {
       this.bgm.muted = this._muted;
     }
     this.saveSettings();
@@ -121,8 +126,17 @@ class AudioManager {
     if (this.bgm) return;
     this.bgm = new Audio('/sounds/BGM/ボードの上の静かな午後①.mp3');
     this.bgm.loop = true;
-    this.bgm.volume = this._bgmVolume;
     this.bgm.muted = this._muted;
+    // BGM音量をGainNode経由で制御（iOS Safari対応）
+    if (this.audioCtx) {
+      const source = this.audioCtx.createMediaElementSource(this.bgm);
+      this.bgmGainNode = this.audioCtx.createGain();
+      this.bgmGainNode.gain.value = this._bgmVolume;
+      source.connect(this.bgmGainNode);
+      this.bgmGainNode.connect(this.audioCtx.destination);
+    } else {
+      this.bgm.volume = this._bgmVolume;
+    }
 
     // loopプロパティのフォールバック: endedイベントで手動ループ
     this.bgmEndedHandler = () => {
@@ -174,6 +188,7 @@ class AudioManager {
       }
       this.bgm.pause();
       this.bgm.currentTime = 0;
+      this.bgmGainNode = null;
       this.bgm = null;
     }
   }

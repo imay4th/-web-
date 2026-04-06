@@ -1,11 +1,13 @@
-import { useState, useCallback } from 'react';
-import type { GameState, Category, RankingEntry } from '@yacht/shared';
+import { useState, useCallback, useEffect } from 'react';
+import type { GameState, Category, RankingEntry, GameScoredPayload } from '@yacht/shared';
+import { CATEGORIES } from '@yacht/shared';
 import { GameStatus } from '../components/GameStatus/GameStatus';
 import { PlayerList } from '../components/PlayerList/PlayerList';
 import { DiceArea } from '../components/DiceArea/DiceArea';
 import { ScoreCard } from '../components/ScoreCard/ScoreCard';
 import { TurnBanner } from '../components/TurnBanner/TurnBanner';
 import { ResultModal } from '../components/ResultModal/ResultModal';
+import { ScoreAnnounce } from '../components/ScoreAnnounce/ScoreAnnounce';
 import styles from './Game.module.css';
 
 interface GameProps {
@@ -13,6 +15,7 @@ interface GameProps {
   playerId: string;
   isMyTurn: boolean;
   rankings: RankingEntry[] | null;
+  lastScoredEvent: GameScoredPayload | null;
   onRoll: (testDiceValues?: number[]) => void;
   onToggleKeep: (dieIndex: number) => void;
   onScore: (category: Category) => void;
@@ -30,6 +33,7 @@ export function Game({
   playerId,
   isMyTurn,
   rankings,
+  lastScoredEvent,
   onRoll,
   onToggleKeep,
   onScore,
@@ -43,6 +47,11 @@ export function Game({
 }: GameProps) {
   const [testMode, setTestMode] = useState(false);
   const [testDiceValues, setTestDiceValues] = useState([1, 1, 1, 1, 1]);
+  const [showScoreAnnounce, setShowScoreAnnounce] = useState(false);
+  const [scoreAnnounceKey, setScoreAnnounceKey] = useState(0);
+  const [scoreAnnounceData, setScoreAnnounceData] = useState<{
+    playerName: string; categoryName: string; score: number;
+  } | null>(null);
 
   const handleTestDiceChange = useCallback((index: number, value: number) => {
     setTestDiceValues(prev => {
@@ -51,6 +60,21 @@ export function Game({
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    if (!lastScoredEvent || !gameState) return;
+    const player = gameState.players.find(p => p.id === lastScoredEvent.playerId);
+    const categoryDef = CATEGORIES.find(c => c.id === lastScoredEvent.category);
+    setScoreAnnounceData({
+      playerName: player?.nickname ?? '???',
+      categoryName: categoryDef?.name ?? String(lastScoredEvent.category),
+      score: lastScoredEvent.score,
+    });
+    setShowScoreAnnounce(true);
+    setScoreAnnounceKey(k => k + 1);
+    const timer = setTimeout(() => setShowScoreAnnounce(false), 2500);
+    return () => clearTimeout(timer);
+  }, [lastScoredEvent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentPlayerName = currentPlayer?.nickname ?? '';
@@ -100,7 +124,7 @@ export function Game({
         </div>
       </div>
 
-      <TurnBanner isMyTurn={isMyTurn} gameStarted={true} />
+      {!rankings && <TurnBanner isMyTurn={isMyTurn} gameStarted={true} />}
 
       {rankings && (
         <ResultModal
@@ -112,6 +136,10 @@ export function Game({
           onRestartNpc={onRestartNpc}
           onBackToNpcSelect={onBackToNpcSelect}
         />
+      )}
+
+      {showScoreAnnounce && scoreAnnounceData && (
+        <ScoreAnnounce key={scoreAnnounceKey} {...scoreAnnounceData} />
       )}
 
       {showResumeOverlay && (

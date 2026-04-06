@@ -30,6 +30,7 @@ export interface UseGameReturn {
   room: Room | null;
   gameState: GameState | null;
   rankings: RankingEntry[] | null;
+  lastScoredEvent: GameScoredPayload | null;
   error: string | null;
   isConnected: boolean;
   isMyTurn: boolean;
@@ -62,6 +63,7 @@ export function useGame(): UseGameReturn {
   const [room, setRoom] = useState<Room | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [rankings, setRankings] = useState<RankingEntry[] | null>(null);
+  const [lastScoredEvent, setLastScoredEvent] = useState<GameScoredPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [npcDifficulty, setNpcDifficulty] = useState<NpcDifficulty | null>(null);
   const [showResumeOverlay, setShowResumeOverlay] = useState(false);
@@ -138,6 +140,7 @@ export function useGame(): UseGameReturn {
     };
 
     const onGameScored = (payload: GameScoredPayload) => {
+      setLastScoredEvent(payload);
       setGameState((prev) => {
         if (!prev) return prev;
         const updatedScoreCards = { ...prev.scoreCards };
@@ -434,6 +437,7 @@ export function useGame(): UseGameReturn {
     room,
     gameState,
     rankings,
+    lastScoredEvent,
     error,
     isConnected,
     isMyTurn,

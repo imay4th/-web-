@@ -97,6 +97,7 @@ export function App() {
             playerId={game.playerId}
             isMyTurn={game.isMyTurn}
             rankings={game.rankings}
+            lastScoredEvent={game.lastScoredEvent}
             onRoll={game.rollDice}
             onToggleKeep={game.toggleKeep}
             onScore={game.scoreCategory}

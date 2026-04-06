@@ -1,6 +1,6 @@
 # ヨット 開発ロードマップ
 
-最終更新: 2026-04-06 (6)
+最終更新: 2026-04-06 (8)
 
 ## ⚠️ 進捗管理ルール
 
@@ -273,6 +273,44 @@
 
 ---
 
+## Phase 14: 音量調節修正 + IME修正
+
+### 14.1 音量調節機能修正 [S] — ✅ 完了
+- BGM音量スライダーでauto-unmute（ミュート中でもスライダー操作で自動解除）
+- SEプレビュー音追加（300msデバウンス付き、diceKeep音でフィードバック）
+- 音量ラベルに現在値%表示（「BGM音量 70%」）
+- スライダーtouchターゲット拡大（4px→8px）+ touch-action: pan-x
+
+### 14.2 スマホIME二重入力修正 [S] — ✅ 完了
+- compositionRefガードを復活（Phase 11.1退行バグの修正）
+- onBlur安全リセット追加（永久ブロック問題対策）
+- Lobby.tsx: handleCompositionStart / handleCompositionEnd / handleBlur追加
+
+---
+
+## Phase 15: iOS対応修正 + スコア確定ポップアップ
+
+### 15.1 iOS BGM音量修正 [S] — ✅ 完了
+- `HTMLAudioElement.volume` が iOS Safari で無視される問題を修正
+- `MediaElementSourceNode` → `GainNode` → `destination` 経由で音量制御（iOS対応）
+- `bgmGainNode` フィールド追加、`setBgmVolume()`・`startBgm()`・`stopBgm()` 修正
+
+### 15.2 ルームID入力修正 [S] — ✅ 完了
+- iOS で英字入力でも `compositionstart` が発火し `composingRef` が永久ブロックになる問題を修正
+- composition ガードを完全削除、`onChange` の正規表現フィルタのみに
+
+### 15.3 TurnBanner ゲーム終了後表示修正 [S] — ✅ 完了
+- ゲーム終了後（ResultModal表示中）「あなたの番です」が出る問題を修正
+- `Game.tsx` で `{!rankings && <TurnBanner .../>}` に変更
+
+### 15.4 スコア確定ポップアップ [M] — ✅ 完了
+- `game:scored` イベント時にプレイヤー名・役名・点数を2.5秒表示
+- `ScoreAnnounce` コンポーネント新規作成（HandAnnounce パターン流用、z-index: 999）
+- `useGame.ts` に `lastScoredEvent` state 追加
+- `Game.tsx` に表示ロジック + useEffect 追加
+
+---
+
 ## 依存関係グラフ
 
 ```
@@ -308,6 +346,7 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-06 | Phase 12.3: ExpertStrategy改修+サーバー統合 | ExpertStrategyをdecideOptimal/decideHeuristicの2系統化。createNpcStrategyにoptionalTable引数追加。サーバー: index.ts→handler.ts→game-handler.ts→NpcControllerへテーブル伝播。テーブル未生成時はヒューリスティックにフォールバック。ビルド+テスト75件全パス |
 | 2026-04-06 | Phase 12.4: テスト+検証 | ソルバー単体テスト7件(基底ケース,期待値範囲,単調性,ボーナス反映)+シリアライズ4件+Strategy統合7件=18件追加。ビルド成功、テスト93件全パス |
 | 2026-04-06 | Phase 14: 音量修正+IME修正 | BGM音量auto-unmute(ミュート中スライダー操作で自動解除)、SEプレビュー音(300msデバウンス)、音量ラベル%表示、スライダーtouchターゲット拡大。スマホIME二重入力修正(compositionRefガード復活+onBlur安全リセット)。ビルド+テスト93件全パス |
+| 2026-04-06 | Phase 15: iOS修正3件+スコア確定ポップアップ | BGM音量GainNode化(iOS Safari対応)、ルームID入力composition完全削除(iOS永久ブロック修正)、TurnBannerゲーム終了後非表示修正、ScoreAnnounceコンポーネント新規(役名・点数・プレイヤー名2.5秒表示)。ビルド+テスト93件全パス |
 
 ---
 
@@ -317,6 +356,10 @@ Phase 5 → Phase 6 → Phase 7
 - [x] Renderにデプロイ（恒久的な公開URL）
 - [x] 音量調節機能修正（auto-unmute + SEプレビュー）
 - [x] スマホIME二重入力修正
+- [x] iOS BGM音量修正（GainNode化）
+- [x] ルームID入力iOS修正（composition完全削除）
+- [x] TurnBannerゲーム終了後表示修正
+- [x] スコア確定ポップアップ（ScoreAnnounce新規）
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）
 

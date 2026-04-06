@@ -1,0 +1,55 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+  animation: overlayFade 2.5s ease-out forwards;
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.playerText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  animation: textPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.categoryText {
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #c5a44e, #f0d878);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(197, 164, 78, 0.5));
+  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.05s both;
+}
+
+.scoreText {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.15s both;
+}
+
+@keyframes textPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes overlayFade {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
