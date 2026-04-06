@@ -61,7 +61,9 @@ export function Lobby({ nickname, onCreateRoom, onJoinRoom, onStartNpc, error }:
               placeholder="ルームID"
               maxLength={4}
               autoComplete="off"
-              autoCapitalize="characters"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
             />
             <button
               type="submit"

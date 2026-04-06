@@ -166,7 +166,6 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
   text-align: center;
-  text-transform: uppercase;
   letter-spacing: 0.2em;
   min-height: 48px;
 }

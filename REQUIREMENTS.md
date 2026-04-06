@@ -1,6 +1,6 @@
 # ヨット 要件定義書
 
-最終更新: 2026-04-06 (4)
+最終更新: 2026-04-06 (5)
 
 ## 1. プロダクト概要
 
@@ -60,7 +60,9 @@
 - [x] スコアカテゴリ選択のフィードバック強化（パルス+長時間フラッシュ）
 - [x] テーマ選択機能（背景4種×ダイス4種×アクセント4種、localStorage永続化）
 - [x] 音量調節機能改善（BGM auto-unmute、SEプレビュー音300msデバウンス、%ラベル表示）
-- [x] ルームID入力スマホIME対応（compositionRefガード+onBlur安全リセット）
+- [x] BGM音量iOS対応（GainNode経由制御、HTMLAudioElement.volume非依存）
+- [x] ルームID入力スマホIME対応（compositionガード完全削除、正規表現フィルタのみ）
+- [x] スコア確定ポップアップ（ScoreAnnounce: 役名・点数・プレイヤー名を2.5秒表示）
 
 ### 4.4 NPC対戦
 - [x] NPC対戦モード（4段階難易度: easy / normal / hard / expert）
