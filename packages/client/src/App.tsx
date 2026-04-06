@@ -108,6 +108,7 @@ export function App() {
             onBackToNpcSelect={game.backToNpcSelect}
             showResumeOverlay={game.showResumeOverlay}
             onResumeNpc={game.resumeNpcGame}
+            nickname={game.nickname}
           />
         );
 

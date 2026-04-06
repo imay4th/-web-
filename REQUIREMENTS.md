@@ -1,6 +1,6 @@
 # ヨット 要件定義書
 
-最終更新: 2026-04-06 (5)
+最終更新: 2026-04-06 (6)
 
 ## 1. プロダクト概要
 
@@ -60,11 +60,14 @@
 - [x] スコアカテゴリ選択のフィードバック強化（パルス+長時間フラッシュ）
 - [x] テーマ選択機能（背景4種×ダイス4種+画像ダイス×アクセント4種、localStorage永続化）
 - [x] 画像ダイステーマ基盤（`DiceTheme.imagePath` フィールド、将来の追加は2ステップで完結）
-- [x] エヴァ初号機ダイス（イラスト調、紫/オレンジ）
+- [x] エヴァ初号機ダイス EVA01（イラスト調、紫/オレンジ）
+- [x] エヴァ零号機ダイス EVA00（旧劇：青）/ EVA00-Re（新劇：黄）
+- [x] エヴァ弐号機ダイス EVA02（赤）
 - [x] 音量調節機能改善（BGM auto-unmute、SEプレビュー音300msデバウンス、%ラベル表示）
 - [x] BGM音量iOS対応（GainNode経由制御、HTMLAudioElement.volume非依存）
 - [x] ルームID入力iOS対応（autoCapitalize="off"+autoCorrect="off"+spellCheck=false、CSS text-transform削除で三重変換解消）
 - [x] スコア確定ポップアップ（ScoreAnnounce: 役名・点数・プレイヤー名を2.5秒表示）
+- [x] テストモードアクセス制限（ユーザー名「Dev」「dev」のみボタン表示、それ以外は非表示）
 
 ### 4.4 NPC対戦
 - [x] NPC対戦モード（4段階難易度: easy / normal / hard / expert）

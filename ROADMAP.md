@@ -1,6 +1,6 @@
 # ヨット 開発ロードマップ
 
-最終更新: 2026-04-06 (10)
+最終更新: 2026-04-06 (13)
 
 ## ⚠️ 進捗管理ルール
 
@@ -337,6 +337,24 @@
 - **ダイスが枠より小さい**: `.dieImage` に `transform: scale(1.15)` 適用、PNG内余白を切り取り。画像モード時ダイスサイズ拡大（PC:76px、スマホ:52px、小型:44px）
 - **黄色い枠**: `.die.dieImageMode.dieNewlyKept` 追加、`!important` box-shadow をアクセントグローに統一
 
+### 17.3 追加ダイステーマ3種 [S] — ✅ 完了
+- エヴァ零号機（旧劇）`eva00_blue`、エヴァ零号機（新劇）`eva00_yellow`、エヴァ弐号機 `eva02` を追加
+- `packages/design/dice/` から `packages/client/public/dice/` に画像コピー＋リネーム（1.png〜6.png）
+- `theme-presets.ts` に3エントリ追加（`imagePath` 方式、既存パターン踏襲）
+
+---
+
+## Phase 18: テストモードアクセス制限
+
+### 18.1 テストモードボタン表示条件追加 [S] — ✅ 完了
+- `Game.tsx` に `nickname` prop 追加、`nickname.toLowerCase() === 'dev'` のときのみボタン表示
+- `App.tsx` から `game.nickname` を `Game` コンポーネントに渡す
+- ユーザー名「Dev」「dev」以外ではテストモードボタンが完全に非表示
+
+### 18.2 ダイステーマ名修正 + パネルレイアウト修正 [S] — ✅ 完了
+- エヴァ系ダイス名を短縮: EVA01 / EVA00 / EVA00-Re / EVA02 に変更
+- ThemePanel CSSのダイス名重なり修正: `white-space: nowrap` → `normal`、`flex-shrink: 0` + `word-break: break-word` + `text-align: center` で折り返し表示
+
 ---
 
 ## 依存関係グラフ
@@ -378,6 +396,9 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-06 | Phase 16: ルームID入力iOS二重入力バグ根本修正 | autoCapitalize="characters"→"off"(iOS OS側composition二重発火の根本原因除去)、autoCorrect="off"+spellCheck={false}追加、CSS text-transform:uppercase削除(toUpperCase()に一元化)。Phase 9.6〜15.2の振り子を脱却。ビルド+テスト93件全パス |
 | 2026-04-06 | Phase 17: 画像ダイステーマ基盤+eva01追加 | DiceTheme型にimagePath追加、Die.tsx分岐描画、DiceArea.tsxでuseTheme連携、CSS dieImageMode追加、ThemePanel画像プレビュー対応。eva01（初号機イラスト調）を追加。将来の追加は2ステップで完結。ビルド成功 |
 | 2026-04-06 | Phase 17.2: 画像ダイスバグ修正3件 | テーマ切替不可→ThemeManagerにsubscribe/notifyパターン追加。ダイス小さい→scale(1.15)+サイズ拡大(76/52/44px)。黄色枠→dieImageMode.dieNewlyKeptで!important box-shadow統一。ビルド成功 |
+| 2026-04-06 | Phase 17.3: 追加ダイステーマ3種 | eva00_blue(零号機旧劇)、eva00_yellow(零号機新劇)、eva02(弐号機)を追加。画像コピー+theme-presets.ts 3エントリ追加。ビルド成功 |
+| 2026-04-06 | Phase 18.1: テストモードアクセス制限 | テストモードボタンをnickname「Dev」「dev」限定表示に変更。Game.tsxにnickname prop追加、App.tsxから渡す。ビルド成功 |
+| 2026-04-06 | Phase 18.2: ダイステーマ名+パネル修正 | エヴァ系ダイス名をEVA01/EVA00/EVA00-Re/EVA02に短縮。ThemePanelのoptionName重なりをCSS修正（white-space:normal+flex-shrink:0+word-break）。ビルド成功 |
 
 ---
 
@@ -393,9 +414,10 @@ Phase 5 → Phase 6 → Phase 7
 - [x] スコア確定ポップアップ（ScoreAnnounce新規）
 - [x] ルームID入力iOS二重入力バグ根本修正（autoCapitalize/autoCorrect/text-transform三重変換解消）
 - [x] 画像ダイステーマ基盤 + エヴァ初号機（eva01）追加
-- [ ] 追加ダイスデザイン（eva01_real、eva00等）
+- [x] 追加ダイステーマ3種（eva00_blue、eva00_yellow、eva02）
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）
+- [ ] サーバー側testDiceValuesバリデーション（将来 — 現状はクライアント側UI制御のみ）
 
 ---
 

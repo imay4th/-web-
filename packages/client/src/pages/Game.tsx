@@ -26,6 +26,7 @@ interface GameProps {
   onBackToNpcSelect?: () => void;
   showResumeOverlay?: boolean;
   onResumeNpc?: () => void;
+  nickname: string;
 }
 
 export function Game({
@@ -44,6 +45,7 @@ export function Game({
   onBackToNpcSelect,
   showResumeOverlay,
   onResumeNpc,
+  nickname,
 }: GameProps) {
   const [testMode, setTestMode] = useState(false);
   const [testDiceValues, setTestDiceValues] = useState([1, 1, 1, 1, 1]);
@@ -81,13 +83,15 @@ export function Game({
 
   return (
     <div className={styles.container}>
-      <button
-        type="button"
-        className={styles.testModeBtn}
-        onClick={() => setTestMode(prev => !prev)}
-      >
-        {testMode ? 'テストON' : 'テストOFF'}
-      </button>
+      {nickname.toLowerCase() === 'dev' && (
+        <button
+          type="button"
+          className={styles.testModeBtn}
+          onClick={() => setTestMode(prev => !prev)}
+        >
+          {testMode ? 'テストON' : 'テストOFF'}
+        </button>
+      )}
       <div className={styles.content}>
         <GameStatus
           gameState={gameState}

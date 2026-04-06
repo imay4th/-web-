@@ -47,6 +47,7 @@
   background: transparent;
   cursor: pointer;
   min-width: 52px;
+  flex-shrink: 0;
   transition: border-color 150ms ease;
 }
 
@@ -62,7 +63,11 @@
 .optionName {
   font-size: 0.6rem;
   color: var(--text-on-dark, #f0e8d8);
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 56px;
+  word-break: break-word;
 }
 
 /* 背景プレビュー: 小さい丸 */
