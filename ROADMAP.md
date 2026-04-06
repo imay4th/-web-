@@ -1,6 +1,6 @@
 # ヨット 開発ロードマップ
 
-最終更新: 2026-04-06 (3)
+最終更新: 2026-04-06 (6)
 
 ## ⚠️ 進捗管理ルール
 
@@ -200,6 +200,79 @@
 
 ---
 
+## Phase 11: UI/UXバグ修正 + 再接続基盤
+
+### 11.1 スマホ版ルームID入力修正 [S] — ✅ 完了
+- IME compositionガードを全削除（composingRef永久ブロック問題の根本修正）
+- `inputMode="text"` 追加でIME抑制
+- 単純な正規表現フィルタのみのシンプルな方式に変更
+
+### 11.2 スコアカテゴリ選択フィードバック改善 [S] — ✅ 完了
+- pending状態の背景を強化（opacity 0.2→0.35）+ 左ボーダー + パルスアニメーション追加
+- 確定フラッシュ延長（0.6s→1.5s）、スコア出現延長（0.4s→0.8s）
+- スマホ版「確定」ボタンのサイズ拡大（padding/font-size最低値確保）
+
+### 11.3 キープダイスのゴースト表示 + 新規キープ強調 [M] — ✅ 完了
+- ロールエリアを全5スロット固定化。キープ移動後もゴースト（透過+点滅）が元の位置に残る
+- キープエリアの新規追加ダイスに黄色枠（ターン変更時にクリア）
+- `ghostSlot` でレイアウトシフト防止、`prefers-reduced-motion` 対応
+
+### 11.4 5番目ダイスの単独バウンス修正 [S] — ✅ 完了
+- `animationDelay` の計算を `originalIndex` → `displayIndex`（ロールエリア内の表示順）に変更
+- ロールエリアに残るダイス数に関わらず均等な遅延タイミングに
+
+### 11.5 画面ロック時の再接続基盤（NPC + 対人戦） [L] — ✅ 完了
+- **サーバー**: グレースピリオド（NPC:5分、対人:2分）導入。disconnect時に即座にルーム削除せずタイマーで猶予
+- **サーバー**: `game:rejoin` イベント追加。socketId・scoreCardsキー・playerRoomMap を新IDに更新
+- **サーバー**: `game:resume-npc` イベント追加。NPCターンの再実行トリガー
+- **サーバー**: `room-manager.ts` に `rejoinRoom()` メソッド追加
+- **サーバー**: `pingTimeout` を20s→60sに延長
+- **クライアント**: `visibilitychange` リスナーで画面復帰を検知→自動再接続→`game:rejoin`
+- **クライアント**: NPC対戦時は「再開する」オーバーレイ、対人戦は自動再接続
+- **クライアント**: `game:session-expired` でロビーに自動戻し
+
+---
+
+## Phase 12: 最適戦略NPC（動的計画法）
+
+### 12.1 DPソルバー設計 [M] — ✅ 完了（設計のみ）
+- 後ろ向き帰納法（backward induction）による完全最適戦略を設計
+- 状態空間: (カテゴリbitmask: 4096通り) × (上段小計: 64通り) = 262,144状態
+- 期待値推移表 V[bitmask][upperSub] を事前計算し、ExpertStrategyに適用する方針
+- 計算最適化戦略: 枝刈りではなく構造的最適化（ダイスインデックス化、スコア事前計算、ロール分布配列化）
+- 詳細プラン: `.claude/plans/playful-wiggling-shell.md`
+
+### 12.2 DPソルバー実装 [L] — ✅ 完了
+- `packages/shared/src/ai/optimal-solver.ts` — DPソルバー本体（事前計算テーブル + 後ろ向き帰納法）
+- `packages/shared/scripts/generate-table.ts` — テーブル生成CLIスクリプト
+- `packages/shared/src/ai/optimal-table-loader.ts` — テーブル読み込み
+- 計算時間: 8.2秒（構造的最適化後）、テーブルサイズ: 2MB、最適期待値: 190.01点
+
+### 12.3 ExpertStrategy改修 + サーバー統合 [M] — ✅ 完了
+- ExpertStrategy: テーブル参照型decideOptimal + ヒューリスティック型decideHeuristicの2系統化（フォールバック付き）
+- createNpcStrategy: `optimalTable?: Float64Array` 第2引数追加（後方互換）
+- サーバー伝播: index.ts(テーブル読み込み) → handler.ts → game-handler.ts → NpcController
+
+### 12.4 テスト + 検証 [M] — ✅ 完了
+- ソルバー単体テスト7件（ベースケース、期待値範囲、単調性、ボーナス反映）
+- シリアライズテスト4件（ラウンドトリップ、サイズ、異常入力）
+- Strategy統合テスト7件（テーブルあり/なし、各rollCount、カテゴリ選択）
+- ビルド成功、テスト93件全パス（計算8秒 + テスト11秒）
+
+---
+
+## Phase 13: テーマ選択機能
+
+### 13.1 テーマ基盤 + UI [L] — ✅ 完了
+- 背景(4種) × ダイス(4種) × アクセント(4種) の3軸独立選択
+- CSS変数差し替え方式（`document.documentElement.style.setProperty()`）
+- theme-manager.ts シングルトン + useTheme.ts フック（AudioManager踏襲）
+- ThemeButton + ThemePanel UI（AudioToggleButton/AudioPanel踏襲）
+- ダイスのハードコードCSS値をCSS変数化（DiceArea.module.css, ScoreCard.module.css）
+- localStorage永続化（キー: `yacht_theme`）
+
+---
+
 ## 依存関係グラフ
 
 ```
@@ -227,13 +300,19 @@ Phase 5 → Phase 6 → Phase 7
 | 2026-04-06 | Phase 9: UI/UXバグ修正（7件） | BGM永続再生、役名表示ロジック、ダイスアニメーション、キープアニメ削除、PlayerList均等幅、ルームID IME対応、参加ボタンはみ出し修正。Playwright視覚検証16/16パス |
 | 2026-04-06 | Phase 9.8: 再修正3件 | Fix A: BGM初期化をApp.tsxに移動。Fix B: useAudio()の不安定参照によるuseEffectタイマークリア問題をaudioRefで解決。Fix C: ロールエリアdiceRow常時2行化。ビルド+テスト全パス |
 | 2026-04-06 | Phase 10: 音声改善+バグ修正5件 | ダイスCSS修正(display:flex+aspect-ratio)、BGMデフォルトOFF、BGMボタン全画面化(AudioToggleButton)、音量設定ポップアップ(AudioPanel)、役名表示ズレ修正(scoreCard変更時justRolledリセット)。ビルド+テスト75件全パス |
+| 2026-04-06 | Phase 11: UI/UXバグ修正+再接続基盤 | ルームID入力修正(composition削除)、スコア選択フィードバック改善(pending強化+アニメ延長)、ダイスゴースト表示+新規キープ黄色枠、5番目ダイス単独バウンス修正(displayIndex)、再接続基盤(グレースピリオド+rejoin+visibilitychange+resumeオーバーレイ)。ビルド+テスト75件全パス |
+| 2026-04-06 | Phase 12.1: 最適戦略NPC設計 | 後ろ向き帰納法DPによる完全最適戦略を設計。状態空間262K、テーブル2MB。枝刈り不可（0点記録が最適になるケースあり）→構造的最適化（配列ベース化で22分→2分）の方針決定。詳細プラン作成済み。コード変更なし |
+| 2026-04-06 | Phase 13.1: テーマ選択機能設計 | 背景×ダイス×アクセント3軸独立選択。CSS変数差し替え方式。デザイン作成ツール検討→Claude Code+ブラウザプレビューで十分と判断（AIDesigner/画像生成AIは統合コスト高）。詳細プラン作成済み。コード変更なし |
+| 2026-04-06 | Phase 13.1: テーマ選択機能実装 | テーマ基盤(theme-types/presets/manager/useTheme) + UI(ThemeButton/ThemePanel) 新規8ファイル作成。DiceArea/ScoreCard/theme.cssのハードコード値をCSS変数化。main.tsxにthemeManager.init()、App.tsxにThemeButton追加。ビルド+テスト75件全パス |
+| 2026-04-06 | Phase 12.2: DPソルバー実装 | optimal-solver.ts(後ろ向き帰納法DP、252ダイスインデックス+462キープタプル+疎ロール分布)、generate-table.ts(CLIスクリプト)、optimal-table-loader.ts(キャッシュ付きローダー)。計算8.2秒、テーブル2MB、最適期待値190.01点。ビルド+テスト75件全パス |
+| 2026-04-06 | Phase 12.3: ExpertStrategy改修+サーバー統合 | ExpertStrategyをdecideOptimal/decideHeuristicの2系統化。createNpcStrategyにoptionalTable引数追加。サーバー: index.ts→handler.ts→game-handler.ts→NpcControllerへテーブル伝播。テーブル未生成時はヒューリスティックにフォールバック。ビルド+テスト75件全パス |
+| 2026-04-06 | Phase 12.4: テスト+検証 | ソルバー単体テスト7件(基底ケース,期待値範囲,単調性,ボーナス反映)+シリアライズ4件+Strategy統合7件=18件追加。ビルド成功、テスト93件全パス |
 
 ---
 
 ## 次のTodo
 
-- [x] Phase 10: 音声システム改善 + UI/ロジックバグ修正5件
-- [ ] ブラウザで手動テスト（ダイス表示・BGMボタン・音量パネル・役名表示）
+- [ ] ブラウザで手動テスト（Phase 11 + NPC対戦確認 + 最適戦略NPC動作確認）
 - [ ] Renderにデプロイ（恒久的な公開URL）
 - [ ] チャット機能（将来）
 - [ ] 成績・ランキング機能（将来）

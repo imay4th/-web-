@@ -7,6 +7,7 @@ import { WaitingRoom } from './pages/WaitingRoom';
 import { NpcSelect } from './pages/NpcSelect';
 import { Game } from './pages/Game';
 import { AudioToggleButton } from './components/AudioToggleButton/AudioToggleButton';
+import { ThemeButton } from './components/ThemeButton/ThemeButton';
 import './styles/theme.css';
 
 export function App() {
@@ -104,6 +105,8 @@ export function App() {
             isNpcGame={game.npcDifficulty !== null}
             onRestartNpc={game.restartNpcGame}
             onBackToNpcSelect={game.backToNpcSelect}
+            showResumeOverlay={game.showResumeOverlay}
+            onResumeNpc={game.resumeNpcGame}
           />
         );
 
@@ -115,6 +118,7 @@ export function App() {
   return (
     <>
       <AudioToggleButton />
+      <ThemeButton />
       {renderContent()}
     </>
   );

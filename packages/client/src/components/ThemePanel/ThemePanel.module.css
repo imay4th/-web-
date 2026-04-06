@@ -1,0 +1,102 @@
+.panel {
+  position: fixed;
+  top: 52px;
+  left: 8px;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 12px 16px;
+  background: rgba(30, 20, 10, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 160, 23, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  color: var(--text-on-dark, #f0e8d8);
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+.options {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.optionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  min-width: 52px;
+  transition: border-color 150ms ease;
+}
+
+.optionBtn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.optionSelected {
+  border-color: var(--accent, #c5a44e) !important;
+  box-shadow: 0 0 8px var(--accent-glow, rgba(197, 164, 78, 0.3));
+}
+
+.optionName {
+  font-size: 0.6rem;
+  color: var(--text-on-dark, #f0e8d8);
+  white-space: nowrap;
+}
+
+/* 背景プレビュー: 小さい丸 */
+.bgPreview {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ダイスプレビュー: ダイス風の四角にドット1個 */
+.dicePreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.diceDot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* アクセントプレビュー: 色丸 */
+.accentPreview {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
